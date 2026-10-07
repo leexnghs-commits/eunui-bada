@@ -1,0 +1,2452 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>은의 바다</title>
+<meta name="description" content="1580년 류큐 나하, 큰 빚을 진 상인이 되어 3년 안에 아홉 번 빚을 갚는 무역 로그라이트. 브라우저에서 바로 한 판(약 20분).">
+<meta name="theme-color" content="#b1362a">
+<meta property="og:type" content="website">
+<meta property="og:title" content="은의 바다: 빚 갚는 상인 로그라이트">
+<meta property="og:description" content="1580년 류큐 나하, 큰 빚을 진 상인이 되어 3년 안에 아홉 번 빚을 갚는 무역 로그라이트. 브라우저에서 바로 한 판(약 20분).">
+<meta property="og:url" content="https://leexnghs-commits.github.io/eunui-bada/">
+<meta property="og:image" content="https://leexnghs-commits.github.io/eunui-bada/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Song+Myung&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* 레이아웃: 왼쪽 16세기 해도(한지+먹선+청자색 바다), 오른쪽 장부, 아래 직원 줄. 거래 성사는 인주 도장 */
+:root {
+  --paper: #ebe2cb;
+  --paper-2: #e0d5b9;
+  --card: #f3ecda;
+  --land: #d6c7a2;
+  --ink: #23272c;
+  --ink-soft: #5d5b51;
+  --line: #b8ab89;
+  --sea: #b7cfc3;
+  --sea-line: #8fb0a3;
+  --seal: #b1362a;
+  --gold: #a3741a;
+  --gold-bg: #f1dfa8;
+  --good: #2e6a4e;
+  --bad: #a3302a;
+  --cheap: #2f6a78;
+  --shade: rgba(35, 39, 44, 0.16);
+  --veil: rgba(28, 30, 28, 0.55);
+  --c-trade: #b5781f; --c-info: #2f7f74; --c-sea: #35598f; --c-shadow: #8e2c3b; --c-luck: #7a4a99; --c-myth: #b8306f;
+  --g0: #a6324a; --g1: #8a939b; --g2: #2f5f9e; --g3: #4b5a33; --g4: #c49a1c;
+  --f-display: "Song Myung", "Nanum Myeongjo", "Batang", serif;
+  --f-ui: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --f-num: "IBM Plex Mono", ui-monospace, "Consolas", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #1a1d1b; --paper-2: #222623; --card: #262a27; --land: #2e322c; --ink: #e8e1cd; --ink-soft: #a7a190;
+    --line: #4b4e45; --sea: #1d302c; --sea-line: #2f4a43; --seal: #e2563f; --gold: #e2b65a; --gold-bg: #4a3c18;
+    --good: #72c296; --bad: #f07c68; --cheap: #6fb7c6; --shade: rgba(0, 0, 0, 0.45); --veil: rgba(0, 0, 0, 0.66); --c-trade: #e0a54a; --c-info: #5fb9a9; --c-sea: #7c9fdc; --c-shadow: #e0687a; --c-luck: #b88ae0; --c-myth: #f07ab0; --g0: #e0697f; --g1: #c3cad1; --g2: #7aa6e6; --g3: #9bb06e; --g4: #e8c24a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #1a1d1b; --paper-2: #222623; --card: #262a27; --land: #2e322c; --ink: #e8e1cd; --ink-soft: #a7a190;
+  --line: #4b4e45; --sea: #1d302c; --sea-line: #2f4a43; --seal: #e2563f; --gold: #e2b65a; --gold-bg: #4a3c18;
+  --good: #72c296; --bad: #f07c68; --cheap: #6fb7c6; --shade: rgba(0, 0, 0, 0.45); --veil: rgba(0, 0, 0, 0.66); --c-trade: #e0a54a; --c-info: #5fb9a9; --c-sea: #7c9fdc; --c-shadow: #e0687a; --c-luck: #b88ae0; --c-myth: #f07ab0; --g0: #e0697f; --g1: #c3cad1; --g2: #7aa6e6; --g3: #9bb06e; --g4: #e8c24a;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--f-ui); font-size: 14px; line-height: 1.45; }
+button { font: inherit; color: inherit; }
+.num { font-family: var(--f-num); font-variant-numeric: tabular-nums; }
+#app { max-width: 1440px; margin: 0 auto; padding-inline: 16px; padding-block: 10px 18px; display: flex; flex-direction: column; gap: 10px; }
+
+/* 상단 장부 줄 */
+.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
+.brand { display: flex; align-items: center; gap: 10px; margin-right: auto; }
+.brand h1 { font-family: var(--f-display); font-weight: 400; font-size: 26px; margin: 0; letter-spacing: 0.04em; }
+.seal-mini { width: 34px; height: 34px; display: grid; place-items: center; background: var(--seal); color: var(--paper); font-family: var(--f-display); font-size: 20px; border-radius: 3px; transform: rotate(-4deg); }
+.stat { display: flex; flex-direction: column; min-width: 0; }
+.stat small { font-size: 11px; color: var(--ink-soft); letter-spacing: 0.06em; }
+.stat b { font-family: var(--f-num); font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.due { min-width: 220px; flex: 1 1 240px; max-width: 360px; }
+.due .lbl { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-soft); }
+.due .lbl b { color: var(--ink); font-weight: 600; }
+.gauge { height: 10px; border: 1px solid var(--line); background: var(--paper-2); border-radius: 2px; overflow: hidden; margin-top: 3px; }
+.gauge i { display: block; height: 100%; background: var(--good); width: 0; transition: width 0.4s; }
+.gauge.short i { background: var(--bad); }
+.icon-btn { border: 1px solid var(--line); background: var(--card); border-radius: 4px; padding: 5px 10px; cursor: pointer; font-size: 12px; }
+.icon-btn:hover { border-color: var(--ink-soft); }
+
+.boss { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; padding: 7px 12px; border: 1px dashed var(--line); border-radius: 4px; font-size: 13px; }
+.boss .tag { font-family: var(--f-display); font-size: 16px; color: var(--seal); }
+.boss.on { border: 1px solid var(--seal); background: color-mix(in srgb, var(--seal) 12%, transparent); animation: pulse 2.2s infinite; }
+.boss .when { margin-left: auto; color: var(--ink-soft); font-size: 12px; }
+.boss .surge { flex-basis: 100%; color: var(--bad); font-weight: 600; font-size: 12.5px; }
+@keyframes pulse { 50% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--seal) 25%, transparent); } }
+
+/* 본문 */
+.main { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); gap: 12px; align-items: start; }
+.mapbox { position: relative; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; background: var(--sea); }
+#map { display: block; width: 100%; height: auto; max-height: 72vh; }
+#map .land { fill: var(--land); stroke: var(--ink); stroke-width: 1.2; stroke-linejoin: round; }
+#map .rhumb { stroke: var(--sea-line); stroke-width: 0.7; }
+#map .port-dot { fill: var(--paper); stroke: var(--ink); stroke-width: 2; }
+#map .port.here .port-dot { fill: var(--seal); }
+#map .port.sel .port-dot { stroke: var(--seal); stroke-width: 3.5; }
+#map .port.closed { opacity: 0.45; }
+#map .port { cursor: pointer; }
+#map .port:focus-visible .port-dot { stroke: var(--gold); stroke-width: 4; }
+#map .pname { font-family: var(--f-display); font-size: 17px; fill: var(--ink); paint-order: stroke; stroke: var(--land); stroke-width: 4px; }
+#map .phan { font-family: var(--f-display); font-size: 11px; fill: var(--ink-soft); paint-order: stroke; stroke: var(--land); stroke-width: 3px; }
+#map .pmon { font-family: var(--f-num); font-size: 11px; fill: var(--seal); paint-order: stroke; stroke: var(--paper); stroke-width: 3px; }
+#map .route { fill: none; stroke: var(--seal); stroke-width: 2; stroke-dasharray: 6 5; }
+#map .cart text { fill: var(--ink); }
+.voyage { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 12px; border-top: 1px solid var(--line); background: var(--card); }
+.voyage p { margin: 0; flex: 1 1 260px; min-width: 0; }
+.voyage .warn { color: var(--bad); font-weight: 600; }
+.voyage .note { color: var(--ink-soft); font-size: 12px; }
+.btn { border: 1px solid var(--ink); background: var(--ink); color: var(--paper); padding: 7px 14px; border-radius: 4px; cursor: pointer; font-weight: 600; }
+.btn:hover { filter: brightness(1.15); }
+.btn.ghost { background: transparent; color: var(--ink); }
+.btn.seal { background: var(--seal); border-color: var(--seal); color: var(--paper); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; filter: none; }
+.btn:focus-visible, .icon-btn:focus-visible, .mini:focus-visible, .tabs button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+.side { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.panel { border: 1px solid var(--line); border-radius: 4px; background: var(--card); min-width: 0; }
+.tabs { display: flex; border-bottom: 1px solid var(--line); overflow-x: auto; }
+.tabs button { border: 0; background: transparent; padding: 9px 14px; cursor: pointer; color: var(--ink-soft); border-bottom: 2px solid transparent; white-space: nowrap; }
+.tabs button.on { color: var(--ink); border-bottom-color: var(--seal); font-weight: 600; }
+.tabbody { padding: 10px 12px 12px; }
+.porthead { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
+.porthead h2 { font-family: var(--f-display); font-weight: 400; font-size: 24px; margin: 0; }
+.porthead span { color: var(--ink-soft); font-size: 12px; }
+.porthead .shopbtn { margin-left: auto; padding: 5px 12px; font-size: 13px; }
+.tbl-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th { text-align: left; font-weight: 500; font-size: 11px; color: var(--ink-soft); letter-spacing: 0.05em; padding: 4px 6px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+td { padding: 6px; border-bottom: 1px dotted var(--line); vertical-align: middle; }
+td.r, th.r { text-align: right; }
+.gname { font-weight: 600; white-space: nowrap; }
+.chip { display: inline-block; font-size: 10px; padding: 0 5px; border-radius: 3px; border: 1px solid currentColor; margin-left: 4px; vertical-align: 1px; font-weight: 500; }
+.chip.contra { color: var(--bad); }
+.chip.hot { color: var(--gold); }
+.chip.cheap { color: var(--cheap); }
+.sub { display: block; font-size: 11px; color: var(--ink-soft); font-weight: 400; }
+.acts { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+.mini { border: 1px solid var(--line); background: var(--paper); border-radius: 3px; padding: 3px 7px; font-size: 12px; cursor: pointer; white-space: nowrap; }
+.mini:hover:not(:disabled) { border-color: var(--ink); }
+.mini.sell { border-color: var(--seal); color: var(--seal); font-weight: 600; }
+.sell { margin-top: 3px; }
+td .mini.sell { display: block; margin-left: auto; }
+.mini.sell.losing { background: color-mix(in srgb, var(--bad) 14%, var(--paper)); }
+.sub.gain { color: var(--good); font-weight: 600; } .sub.loss { color: var(--bad); font-weight: 600; }
+.mini:disabled { opacity: 0.35; cursor: not-allowed; }
+tr.hotrow td { background: color-mix(in srgb, var(--gold-bg) 70%, transparent); }
+tr.cheaprow td { background: color-mix(in srgb, var(--cheap) 10%, transparent); }
+tr.flip td { animation: flipIn 0.5s cubic-bezier(.2,.8,.3,1.2) both; }
+@keyframes flipIn { from { transform: perspective(500px) rotateX(85deg); opacity: 0.15; } to { transform: none; opacity: 1; } }
+.banner { margin: 8px 0 0; padding: 6px 10px; border-radius: 3px; background: var(--gold-bg); color: var(--ink); font-weight: 600; font-size: 13px; }
+.age { font-size: 11px; color: var(--ink-soft); }
+.ledger td.cell { font-family: var(--f-num); text-align: right; font-variant-numeric: tabular-nums; }
+.ledger td.best { color: var(--good); font-weight: 600; }
+.ledger td.low { color: var(--cheap); font-weight: 600; }
+.rumors { margin: 10px 0 0; padding: 0; list-style: none; display: grid; gap: 4px; font-size: 13px; }
+.rumors li { padding-left: 14px; position: relative; }
+.rumors li::before { content: ""; position: absolute; left: 2px; top: 8px; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); }
+.facility { display: grid; gap: 10px; }
+.facility .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px dotted var(--line); }
+.facility .row p { margin: 0; flex: 1 1 200px; }
+.sched td.paid { color: var(--ink-soft); text-decoration: line-through; }
+.sched tr.nextdue td { font-weight: 600; }
+.report { padding: 8px 12px; max-height: 168px; overflow-y: auto; }
+.report h3 { margin: 0 0 4px; font-family: var(--f-display); font-weight: 400; font-size: 16px; }
+.report ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 3px; font-size: 12.5px; }
+.report li { color: var(--ink-soft); }
+.report li b { font-family: var(--f-num); font-weight: 400; font-size: 11px; margin-right: 6px; }
+.report li.bad { color: var(--bad); }
+.report li.good { color: var(--good); }
+.report li.rumor { color: var(--gold); }
+.report li.warn { color: var(--ink); font-weight: 600; }
+
+/* 직원 줄: 조커식 판화 카드. 색 = 계열, 동그라미 = 정산 방식 */
+.crew { position: relative; display: flex; flex-wrap: wrap; gap: 6px 22px; align-items: flex-start; border-top: 2px solid var(--ink); padding-top: 8px; }
+.crew.lift { z-index: 60; }
+.crew-head { flex: 1 1 100%; display: flex; align-items: center; gap: 6px 12px; flex-wrap: wrap; }
+.crew-head h2 { margin: 0; font-family: var(--f-display); font-weight: 400; font-size: 20px; }
+.crew-head small { color: var(--ink-soft); }
+.crew-head .btn { margin-left: auto; }
+.tlegend { display: flex; gap: 10px; flex-wrap: wrap; font-size: 11.5px; color: var(--ink-soft); }
+.tlegend span { display: inline-flex; align-items: center; gap: 4px; }
+.tlegend i { position: static; width: 16px; height: 16px; font-size: 10px; font-style: normal; border-width: 1px; }
+.emps, .cons { display: flex; flex-wrap: wrap; gap: 10px; }
+.cons { margin-left: auto; padding-left: 18px; border-left: 1px dashed var(--line); }
+.jslot { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.jctl { display: flex; gap: 3px; min-height: 20px; }
+.jctl button { border: 1px solid var(--line); background: var(--paper); border-radius: 3px; font-size: 11px; padding: 0 6px; line-height: 18px; cursor: pointer; }
+.jctl button:disabled { opacity: 0.35; cursor: default; }
+.jctl button.danger { color: var(--bad); }
+.jcard { --cat: var(--c-trade); position: relative; width: 108px; height: 148px; border: 2px solid var(--ink); border-radius: 9px; background: var(--card); box-shadow: 3px 3px 0 var(--ink); display: flex; flex-direction: column; overflow: hidden; cursor: help; transition: transform 0.15s; outline: none; }
+.jcard:hover, .jcard:focus-visible { transform: translateY(-5px) rotate(-1.2deg); }
+.jcard:focus-visible { box-shadow: 3px 3px 0 var(--ink), 0 0 0 3px var(--gold); }
+.jcard .jname { font-weight: 700; font-size: 12.5px; text-align: center; padding: 5px 4px 3px; line-height: 1.15; border-bottom: 1.5px solid var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.jcard .art { flex: 1; display: grid; place-items: center; position: relative; color: color-mix(in srgb, var(--cat) 78%, var(--ink)); background-color: color-mix(in srgb, var(--cat) 22%, var(--card)); background-image: repeating-linear-gradient(135deg, transparent 0 6px, color-mix(in srgb, var(--cat) 12%, transparent) 6px 7px); }
+.jcard .art svg { width: 60px; height: 60px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; position: relative; }
+.jcard .jeff { font-family: var(--f-num); font-weight: 600; font-size: 12px; text-align: center; padding: 4px 3px 5px; border-top: 1.5px solid var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.jtype { position: absolute; top: 25px; right: 5px; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-family: var(--f-num); font-weight: 700; font-size: 13px; color: var(--card); background: var(--ink); border: 1.5px solid var(--card); z-index: 1; }
+.t-add { background: var(--good) !important; } .t-mult { background: var(--seal) !important; } .t-passive { background: var(--c-info) !important; }
+.t-chance { background: var(--c-luck) !important; } .t-pos { background: var(--gold) !important; }
+.jtier { position: absolute; bottom: 30px; left: 5px; width: 20px; height: 20px; display: grid; place-items: center; font-family: var(--f-display); font-size: 13px; color: var(--card); background: var(--ink-soft); border-radius: 3px; z-index: 1; }
+.r2 .jtier { background: var(--cheap); } .r3 .jtier { background: var(--gold); } .r4 .jtier { background: var(--seal); }
+.jslotno { position: absolute; top: 25px; left: 5px; font-family: var(--f-num); font-size: 11px; font-weight: 600; background: var(--card); border: 1.5px solid var(--ink); border-radius: 4px; padding: 0 4px; z-index: 1; }
+.jcard.r2::after { content: ""; position: absolute; inset: 3px; border: 1.5px solid var(--cheap); border-radius: 6px; pointer-events: none; }
+.jcard.r3 { border-color: var(--gold); box-shadow: 3px 3px 0 var(--gold); }
+.jcard.r3::after { content: ""; position: absolute; inset: 3px; border: 2px solid var(--gold); border-radius: 6px; pointer-events: none; }
+.jcard.r3 .art::before { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 35%, color-mix(in srgb, var(--gold) 45%, transparent) 48%, transparent 62%); background-size: 260% 100%; animation: foil 3.4s linear infinite; }
+@keyframes foil { from { background-position: 160% 0; } to { background-position: -110% 0; } }
+@property --ang { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+.jcard.r4 { border: 3px solid transparent; background: linear-gradient(var(--card), var(--card)) padding-box, conic-gradient(from var(--ang), #e0533a, #e8c24a, #5fb9a9, #7c9fdc, #b88ae0, #e0533a) border-box; box-shadow: 0 0 16px color-mix(in srgb, var(--gold) 55%, transparent), 3px 3px 0 var(--ink); animation: spinang 4s linear infinite; }
+.jcard.r4 .art { background-image: linear-gradient(125deg, rgba(224, 83, 58, .16), rgba(232, 194, 74, .16), rgba(95, 185, 169, .16), rgba(184, 138, 224, .18)); }
+.jcard.r4 .art::before { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, .45) 47%, transparent 64%); background-size: 260% 100%; animation: foil 2.6s linear infinite; }
+.jcard.r4 .jname { color: var(--seal); }
+@keyframes spinang { to { --ang: 360deg; } }
+.t-retrig { background: var(--gold) !important; } .t-copy { background: var(--c-myth) !important; }
+.casc li.banner { border-left-color: var(--gold); background: var(--gold-bg); font-weight: 700; }
+.mythnote { margin: 4px 0 0; padding: 6px 10px; border-radius: 4px; background: var(--gold-bg); font-weight: 700; }
+.jcard.tok { width: 92px; height: 132px; border-radius: 44px 44px 9px 9px; }
+.jcard.tok .jname { padding-top: 9px; }
+.jcard.empty { border: 2px dashed var(--line); box-shadow: none; background: transparent; color: var(--ink-soft); display: grid; place-items: center; text-align: center; font-size: 12px; cursor: default; }
+.jcard.empty:hover { transform: none; }
+.emp.fire { animation: bump 0.38s ease-out; }
+@keyframes bump { 0% { transform: none; } 35% { transform: translateY(-14px) scale(1.08) rotate(-2deg); } 100% { transform: none; } }
+.floaty { position: absolute; left: 50%; top: 2px; transform: translateX(-50%); font-family: var(--f-num); font-weight: 700; font-size: 18px; color: var(--seal); paint-order: stroke; -webkit-text-stroke: 3px var(--card); pointer-events: none; animation: rise 0.9s ease-out forwards; white-space: nowrap; z-index: 2; }
+@keyframes rise { to { transform: translate(-50%, -30px); opacity: 0; } }
+.tip { position: fixed; z-index: 90; max-width: 270px; background: var(--ink); color: var(--paper); border-radius: 6px; padding: 9px 11px; font-size: 12.5px; line-height: 1.5; box-shadow: 0 8px 24px var(--shade); pointer-events: none; }
+.tip .t { font-size: 15px; font-weight: 700; display: block; margin-bottom: 2px; }
+.tip .kind { display: inline-block; font-size: 11px; padding: 0 6px; border-radius: 3px; margin: 0 3px 4px 0; background: color-mix(in srgb, var(--paper) 18%, transparent); }
+.tip .meta { opacity: 0.72; font-size: 11.5px; margin-top: 3px; }
+.shop-h { font-family: var(--f-display); font-weight: 400; font-size: 17px; margin: 10px 0 4px; }
+.shop-row { display: flex; flex-wrap: wrap; gap: 16px; }
+.shopitem { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 120px; }
+.shopitem .btn { width: 100%; }
+.pickwrap { border-radius: 11px; padding: 3px; cursor: pointer; outline: none; }
+.pickwrap.picked { box-shadow: 0 0 0 3px var(--seal); background: color-mix(in srgb, var(--seal) 12%, transparent); }
+.pickwrap:focus-visible { box-shadow: 0 0 0 3px var(--gold); }
+.odds-bars { display: grid; gap: 5px; margin-top: 10px; }
+.ob { display: grid; grid-template-columns: 72px minmax(0, 1fr) 44px; align-items: center; gap: 8px; font-size: 12.5px; }
+.ob i { display: block; height: 12px; border-radius: 2px; min-width: 2px; }
+.ob i.t2 { background: var(--cheap); } .ob i.t3 { background: var(--gold); } .ob i.t4 { background: linear-gradient(90deg, #e0533a, #e8c24a, #5fb9a9, #b88ae0); }
+.ob b { text-align: right; }
+.reveal { text-align: center; }
+.flip { width: 112px; height: 152px; margin: 14px auto 6px; position: relative; perspective: 600px; }
+.flip .fc { position: absolute; inset: 0; backface-visibility: hidden; transition: transform 0.6s cubic-bezier(.3,1.4,.5,1); display: grid; place-items: center; }
+.flip .back { border: 2px solid var(--ink); border-radius: 9px; background: repeating-linear-gradient(45deg, var(--ink) 0 6px, var(--ink-soft) 6px 12px); color: var(--paper); font-family: var(--f-display); font-size: 42px; box-shadow: 3px 3px 0 var(--ink); }
+.flip .front { transform: rotateY(180deg); }
+.flip.go .back { transform: rotateY(-180deg); }
+.flip.go .front { transform: rotateY(0deg); }
+.flip.go.t4 .front .jcard { box-shadow: 0 0 30px var(--gold), 3px 3px 0 var(--ink); }
+.survey { margin-top: 14px; padding: 10px 12px; border: 1px dashed var(--line); border-radius: 6px; display: grid; gap: 8px; }
+.survey p { margin: 0; }
+.sv-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.sv-row span { min-width: 64px; font-size: 13px; }
+.survey input { padding: 7px 9px; font: inherit; border: 1px solid var(--line); border-radius: 4px; background: var(--paper); color: var(--ink); }
+.reveal-msg { font-weight: 600; min-height: 2.6em; }
+.pv { font-size: 11px; text-align: center; color: var(--ink-soft); line-height: 1.3; }
+.pv b { color: var(--good); font-family: var(--f-num); font-size: 13px; }
+
+/* 오버레이 */
+.overlay { position: fixed; inset: 0; z-index: 50; background: var(--veil); display: grid; place-items: center; padding: 16px; overflow-y: auto; }
+.sheet { width: min(560px, 100%); background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 18px 20px; box-shadow: 0 18px 50px var(--shade); position: relative; }
+.sheet h2 { font-family: var(--f-display); font-weight: 400; font-size: 26px; margin: 0 0 8px; text-wrap: balance; }
+.sheet p { margin: 6px 0; }
+.sheet .acts2 { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; margin-top: 14px; }
+.sheet ul.lines { margin: 8px 0; padding-left: 18px; display: grid; gap: 4px; }
+.shake { animation: shake 0.35s; }
+@keyframes shake { 20% { transform: translate(-5px, 2px) rotate(-0.4deg); } 40% { transform: translate(5px, -2px); } 60% { transform: translate(-3px, 1px); } 80% { transform: translate(2px, 0); } }
+
+.casc { width: min(440px, 100%); }
+.casc .ttl { font-family: var(--f-display); font-size: 22px; }
+.casc .base { color: var(--ink-soft); font-size: 13px; font-family: var(--f-num); }
+.casc .total { display: flex; align-items: baseline; gap: 8px; margin: 10px 0 6px; }
+.casc .total .num { font-size: 44px; font-weight: 600; line-height: 1; }
+.casc .total small { color: var(--ink-soft); }
+.casc .total.neg .num { color: var(--bad); }
+.casc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; min-height: 24px; }
+.casc li { display: flex; justify-content: space-between; gap: 10px; padding: 5px 8px; border-left: 3px solid var(--line); background: var(--paper); animation: slidein 0.22s ease-out; font-size: 13.5px; }
+.casc li .ef { font-family: var(--f-num); font-weight: 600; }
+.casc li.add { border-left-color: var(--good); } .casc li.add .ef { color: var(--good); }
+.casc li.mult { border-left-color: var(--seal); } .casc li.mult .ef { color: var(--seal); }
+.casc li.ledger { border-left-color: var(--gold); } .casc li.ledger .ef { color: var(--gold); }
+.casc li.dim { opacity: 0.55; }
+.casc li.boss { border-left-color: var(--bad); color: var(--bad); }
+@keyframes slidein { from { transform: translateX(-14px); opacity: 0; } }
+.hint { font-size: 11px; color: var(--ink-soft); text-align: right; margin-top: 8px; }
+
+.stamp { position: absolute; right: 18px; top: 14px; min-width: 96px; padding: 8px 10px; border: 3px solid var(--seal); color: var(--seal); font-family: var(--f-display); font-size: 26px; text-align: center; border-radius: 6px; transform: rotate(-8deg); background: color-mix(in srgb, var(--card) 70%, transparent); animation: stampin 0.2s cubic-bezier(.3,1.6,.5,1) both; pointer-events: none; line-height: 1.1; }
+.stamp small { display: block; font-family: var(--f-num); font-size: 15px; font-weight: 600; }
+.stamp.big { font-size: 34px; border-width: 4px; }
+.stamp.grey { border-color: var(--ink-soft); color: var(--ink-soft); }
+@keyframes stampin { from { transform: rotate(-8deg) scale(2.4); opacity: 0; } to { transform: rotate(-8deg) scale(1); opacity: 1; } }
+.coin { position: fixed; z-index: 70; width: 12px; height: 12px; border-radius: 50%; background: var(--gold); box-shadow: inset -2px -2px 0 rgba(0,0,0,.2); pointer-events: none; animation: coin 1s cubic-bezier(.2,.6,.4,1) forwards; }
+@keyframes coin { to { transform: translate(var(--dx), var(--dy)) rotate(540deg); opacity: 0; } }
+
+.settle .gauge { height: 18px; margin: 12px 0 4px; }
+.settle .gl { display: flex; justify-content: space-between; font-family: var(--f-num); font-size: 13px; }
+.odds { display: grid; gap: 8px; margin-top: 10px; }
+.odds button { display: flex; justify-content: space-between; align-items: center; gap: 10px; text-align: left; border: 1px solid var(--line); background: var(--paper); border-radius: 4px; padding: 10px 12px; cursor: pointer; }
+.odds button:hover:not(:disabled) { border-color: var(--ink); }
+.odds button:disabled { opacity: 0.4; cursor: not-allowed; }
+.odds b { font-family: var(--f-num); }
+.price { font-family: var(--f-num); font-weight: 600; }
+.legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 11px; color: var(--ink-soft); margin-top: 6px; }
+.toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--paper); padding: 8px 14px; border-radius: 4px; z-index: 80; font-size: 13px; max-width: calc(100% - 32px); }
+.intro ol { padding-left: 20px; display: grid; gap: 6px; margin: 10px 0; }
+
+@media (min-width: 961px) and (min-height: 820px) {
+  html, body { height: 100%; }
+  #app { height: 100vh; min-height: 660px; }
+  .main { flex: 1 1 auto; min-height: 0; grid-template-rows: minmax(0, 1fr); align-items: stretch; }
+  .mapbox { display: flex; flex-direction: column; min-height: 0; }
+  #map { flex: 1 1 auto; min-height: 0; height: 100%; max-height: none; }
+  .side { min-height: 0; }
+  .side > .panel:first-child { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+  .tabbody { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+  .report { flex: 0 0 auto; max-height: 120px; }
+}
+@media (max-width: 960px) {
+  .main { grid-template-columns: minmax(0, 1fr); }
+  .cons { margin-left: 0; padding-left: 0; border-left: 0; }
+  #map { max-height: none; }
+}
+@media (max-width: 560px) {
+  .jcard { width: 100px; height: 140px; }
+  .jcard.tok { width: 88px; height: 128px; }
+  .shopitem { width: 104px; }
+  .brand h1 { font-size: 22px; }
+  #map .pname { font-size: 30px; stroke-width: 6px; }
+  #map .phan { display: none; }
+  #map .pmon { font-size: 20px; }
+  .stat b { font-size: 15px; }
+  .casc .total .num { font-size: 36px; }
+  .stamp { right: 10px; top: 10px; font-size: 22px; min-width: 80px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+  #end .rank { margin: 10px 0 4px; padding: 10px 12px; border: 1px solid var(--line, #c9b48a); border-radius: 8px; }
+  #end .rank p { margin: 2px 0; }
+  #end .rank-t { font-size: 1.15em; }
+  #end .rank-t b { color: var(--seal, #b3261e); font-size: 1.2em; }
+  #end .rank .hj { opacity: .6; margin-left: 4px; }
+  #end .rank-ladder { display: flex; flex-wrap: wrap; gap: 2px 4px; align-items: center; margin: 6px 0 2px; font-size: .85em; }
+  #end .rank-ladder span { opacity: .45; }
+  #end .rank-ladder span.past { opacity: .75; }
+  #end .rank-ladder span.on { opacity: 1; font-weight: 700; color: var(--seal, #b3261e); }
+  #end .rank-ladder i { opacity: .35; font-style: normal; }
+  #end .newbest { color: var(--seal, #b3261e); font-weight: 700; }
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="bar">
+    <div class="brand"><span class="seal-mini" aria-hidden="true">銀</span><h1>은의 바다</h1></div>
+    <div class="stat"><small>날짜</small><b id="st-date">1580년 1월</b></div>
+    <div class="stat"><small>현금</small><b id="st-cash">800</b></div>
+    <div class="stat"><small>나하 예금</small><b id="st-bank">0</b></div>
+    <div class="stat"><small>화물칸</small><b id="st-cargo">0/100</b></div>
+    <div class="stat"><small>대포</small><b id="st-guns">0</b></div>
+    <div class="due">
+      <div class="lbl"><span id="due-lbl">다음 상환</span><b id="due-amt" class="num">300냥</b></div>
+      <div class="gauge" id="due-gauge"><i></i></div>
+    </div>
+    <button class="icon-btn" id="btn-sound" type="button">소리 켜기</button>
+    <button class="icon-btn" id="btn-new" type="button">새 판</button>
+  </header>
+
+  <div class="boss" id="boss"></div>
+
+  <div class="main">
+    <section class="mapbox" aria-label="항로도">
+      <svg id="map" viewBox="0 0 800 640" role="img" aria-label="16세기 동아시아 항로도"></svg>
+      <div class="voyage" id="voyage"></div>
+    </section>
+    <section class="side">
+      <div class="panel">
+        <div class="tabs" role="tablist">
+          <button type="button" data-tab="market" class="on">시장</button>
+          <button type="button" data-tab="ledger">시세 장부</button>
+          <button type="button" data-tab="sched">상환 일정</button>
+          <button type="button" data-tab="port">시설</button>
+        </div>
+        <div class="tabbody" id="tabbody"></div>
+      </div>
+      <div class="panel report"><h3>회계 보고</h3><ul id="log"></ul></div>
+    </section>
+  </div>
+
+  <section class="crew" id="crew">
+    <div class="crew-head">
+      <h2>직원</h2><small>정산은 1번 자리부터 차례로. 카드에 마우스를 올리거나 누르면 설명이 나옵니다.</small>
+      <span class="tlegend"><span><i class="jtype t-add">+</i>덧셈(앞자리)</span><span><i class="jtype t-mult">×</i>곱셈(뒷자리)</span><span><i class="jtype t-pos">⇥</i>자리 조건</span><span><i class="jtype t-chance">?</i>확률</span><span><i class="jtype t-passive">◆</i>상시</span><span>등급 甲&gt;乙&gt;丙&gt;丁(성과급 20/15/10/5%)</span></span>
+      <button class="btn ghost" id="btn-fuse" type="button" style="margin-left:auto">인맥 정리</button>
+      <button class="btn seal" id="btn-shop" type="button" style="margin-left:0">상점</button>
+    </div>
+    <div class="emps" id="emps"></div>
+    <div class="cons" id="cons"></div>
+  </section>
+</div>
+
+<div class="overlay" id="ov" hidden></div>
+
+<script>window.EUNBADA_CFG = {"endpoint": "https://script.google.com/macros/s/AKfycbzvmFHW4TfEWYFYgZK7KS8w_0UdaACOAXDFYpV6fCKzR6MyCfkzum4yIiG4-ZT2DAmz/exec", "token": "ebw-rhGPjWmGDrPeCL6tLo6n", "channel": "web-1", "public": true};</script>
+<script>
+/* 은의 바다 — 게임 로직 (브라우저와 node 공용, UI 없음) */
+(function (root) {
+  'use strict';
+
+  // ── 데이터 ─────────────────────────────────────────────
+  function proj(lon, lat) { return [(lon - 110) * 36 + 16, (40 - lat) * 22 + 20]; }
+
+  const PORTS = [
+    { id: 0, name: '부산포', hanja: '釜山浦', lon: 129.04, lat: 35.10, seize: 0.12 },
+    { id: 1, name: '나가사키', hanja: '長崎', lon: 129.87, lat: 32.75, seize: 0, yard: true },
+    { id: 2, name: '나하', hanja: '那覇', lon: 127.68, lat: 26.21, seize: 0, home: true, yard: true },
+    { id: 3, name: '영파', hanja: '寧波', lon: 121.55, lat: 29.87, seize: 0.2 },
+    { id: 4, name: '마카오', hanja: '澳門', lon: 113.54, lat: 22.20, seize: 0.1, yard: true },
+    { id: 5, name: '마닐라', hanja: '馬尼拉', lon: 120.98, lat: 14.60, seize: 0 },
+  ];
+  PORTS.forEach(p => { const [x, y] = proj(p.lon, p.lat); p.x = x; p.y = y; });
+
+  const GOODS = [
+    { id: 0, name: '비단', unit: '필', base: 40, depth: 120 },
+    { id: 1, name: '은', unit: '관', base: 30, depth: 160 },
+    { id: 2, name: '도자기', unit: '점', base: 20, depth: 280 },
+    { id: 3, name: '후추', unit: '포', base: 14, depth: 330 },
+    { id: 4, name: '유황', unit: '섬', base: 24, depth: 140, contraband: true },
+  ];
+
+  // 항구별 평소 시세 배수 [항구][상품]
+  const FACTOR = [
+    [1.25, 1.10, 0.90, 1.55, 1.20], // 부산포
+    [1.55, 0.70, 1.30, 1.20, 0.55], // 나가사키
+    [1.10, 0.95, 1.05, 0.65, 0.70], // 나하
+    [0.60, 1.35, 0.60, 1.50, 1.70], // 영파
+    [0.75, 1.50, 0.70, 1.10, 1.40], // 마카오
+    [1.45, 0.60, 1.60, 0.60, 1.00], // 마닐라
+  ];
+
+  const SCHEDULE = [
+    { due: 3, amt: 550 }, { due: 7, amt: 1000 }, { due: 11, amt: 1700, boss: 0 },
+    { due: 15, amt: 2700 }, { due: 19, amt: 4100 }, { due: 23, amt: 6100, boss: 1 },
+    { due: 27, amt: 8150 }, { due: 31, amt: 11050 }, { due: 35, amt: 15300, boss: 2, final: true },
+  ];
+
+  const BOSSES = {
+    customs: { id: 'customs', name: '해금 단속관', rule: '유황 압수 확률 3배, 영파와 마카오에 들어가면 현금 5% 세금' },
+    rival: { id: 'rival', name: '경쟁 대상단', rule: '모든 판매가 20% 하락' },
+    pirateKing: { id: 'pirateKing', name: '해적왕 선단', rule: '해적을 만날 확률 2.5배, 선단 규모 +5척' },
+    auditor: { id: 'auditor', name: '세무 감사관', rule: '연말 결산 때 배에 실린 화물 시가의 25%를 추가 징수' },
+    plague: { id: 'plague', name: '역병', rule: '항구 두 곳 봉쇄' },
+  };
+  const BOSS_IDS = Object.keys(BOSSES);
+
+  // 직원 = 조커. casc는 판매 정산 연쇄에서 왼쪽부터 차례로 발동
+  const EMPLOYEES = [
+    { id: 'haggler', name: '흥정꾼', rarity: 1, cost: 100, wage: 8, desc: '팔 때 단위당 +2냥',
+      casc: c => ({ kind: 'add', v: 2 * c.q }) },
+    { id: 'opener', name: '개시 상인', rarity: 1, cost: 110, wage: 8, desc: '맨 왼쪽 자리: 입항 후 첫 판매 +150냥',
+      casc: c => (c.leftmost && c.first ? { kind: 'add', v: 150 } : null) },
+    { id: 'silk', name: '비단 중개상', rarity: 1, cost: 170, wage: 14, desc: '비단 이익 ×1.6',
+      casc: c => (c.g === 0 ? { kind: 'mult', v: 1.6 } : null) },
+    { id: 'porcelain', name: '도자기 감별사', rarity: 1, cost: 160, wage: 12, desc: '도자기 이익 ×1.8',
+      casc: c => (c.g === 2 ? { kind: 'mult', v: 1.8 } : null) },
+    { id: 'pepper', name: '후추 상인', rarity: 1, cost: 120, wage: 10, desc: '후추 팔 때 단위당 +5냥',
+      casc: c => (c.g === 3 ? { kind: 'add', v: 5 * c.q } : null) },
+    { id: 'tongsa', name: '통사', rarity: 1, cost: 140, wage: 12, desc: '1개월 거리 항구의 시세를 늘 앎' },
+    { id: 'rumor', name: '소문꾼', rarity: 1, cost: 130, wage: 10, desc: '매달 장부가 가장 오래된 항구 하나의 시세를 새로 알아냄' },
+    { id: 'owner', name: '선주', rarity: 1, cost: 220, wage: 15, desc: '화물칸 +40' },
+    { id: 'gaekju', name: '객주', rarity: 1, cost: 180, wage: 14, desc: '사고팔 때 가격이 덜 움직임(시장 충격 절반)' },
+    { id: 'assayer', name: '은 감정사', rarity: 2, cost: 400, wage: 20, desc: '은 이익 ×(1 + 0.2×은 거래 실적), 입항마다 은 첫 판매만 1로 셈',
+      casc: c => (c.g === 1 ? { kind: 'mult', v: 1 + 0.2 * (c.s.silverSales + 1) } : null) },
+    { id: 'clerk', name: '장부 관리인', rarity: 2, cost: 350, wage: 18, desc: '모든 이익 ×(1 + 0.15×직원 수)',
+      casc: c => ({ kind: 'mult', v: 1 + 0.15 * c.n }) },
+    { id: 'bulk', name: '대량 거래상', rarity: 2, cost: 380, wage: 20, desc: '한 번에 40단위 이상 팔면 이익 ×2',
+      casc: c => (c.q >= 40 ? { kind: 'mult', v: 2 } : null) },
+    { id: 'wokou', name: '왜구 연줄', rarity: 2, cost: 420, wage: 25, desc: '해적은 화물 가치 5% 통행세로 해결, 유황 압수 없음' },
+    { id: 'customsman', name: '부패한 세관원', rarity: 2, cost: 400, wage: 22, desc: '유황 이익 ×2.5, 압수 벌금은 2배',
+      casc: c => (c.g === 4 ? { kind: 'mult', v: 2.5 } : null) },
+    { id: 'gunner', name: '포르투갈 포수', rarity: 2, cost: 450, wage: 25, desc: '전투력 2배, 약탈품 +50%' },
+    { id: 'navigator', name: '노련한 항해사', rarity: 2, cost: 500, wage: 25, desc: '항해 1개월 단축(최소 1), 폭풍 피해 없음' },
+    { id: 'cat', name: '행운의 고양이', rarity: 3, cost: 600, wage: 5, desc: '판매마다 1/4 확률로 이익 ×3',
+      casc: c => (c.rand() < 0.25 ? { kind: 'mult', v: 3 } : { kind: 'miss' }) },
+    { id: 'chief', name: '선단 대행수', rarity: 3, cost: 800, wage: 40, desc: '맨 오른쪽 자리: 모든 이익 ×2.5',
+      casc: c => (c.rightmost ? { kind: 'mult', v: 2.5 } : null) },
+    // ── 일반(값싸고 약하지만 성격이 뚜렷) ──
+    { id: 'salt', name: '소금장수', rarity: 1, cost: 70, wage: 4, desc: '상품마다 그 항구 첫 판매에 +40냥',
+      casc: c => (c.fresh ? { kind: 'add', v: 40 } : null) },
+    { id: 'silversmith', name: '은 세공인', rarity: 1, cost: 110, wage: 7, desc: '은 팔 때 단위당 +3냥',
+      casc: c => (c.g === 1 ? { kind: 'add', v: 3 * c.q } : null) },
+    { id: 'smuggler', name: '유황 밀매꾼', rarity: 1, cost: 100, wage: 7, desc: '유황 팔 때 단위당 +5냥, 대신 압수 확률 +5%p',
+      casc: c => (c.g === 4 ? { kind: 'add', v: 5 * c.q } : null) },
+    { id: 'porter', name: '짐꾼', rarity: 1, cost: 90, wage: 5, desc: '화물칸 +15' },
+    { id: 'chanty', name: '뱃노래꾼', rarity: 1, cost: 110, wage: 6, desc: '폭풍에 잃는 화물 절반' },
+    { id: 'gambler', name: '노름꾼', rarity: 1, cost: 90, wage: 5, desc: '상품마다 그 항구 첫 판매에 반반 확률로 +250냥 또는 −120냥',
+      casc: c => (c.fresh ? (c.rand() < 0.5 ? { kind: 'add', v: 250 } : { kind: 'add', v: -120 }) : null) },
+    { id: 'auntie', name: '장터 아낙', rarity: 1, cost: 120, wage: 7, desc: '한 항구에서 두 번째 상품부터 첫 판매에 +120냥',
+      casc: c => (c.fresh && (c.s.portSales || 0) >= 1 ? { kind: 'add', v: 120 } : null) },
+    { id: 'oldsalt', name: '늙은 선원', rarity: 1, cost: 130, wage: 8, desc: '2개월 항로로 온 항구에서 이익 ×1.4',
+      casc: c => ((c.s.lastVoyageMonths || 1) >= 2 ? { kind: 'mult', v: 1.4 } : null) },
+    { id: 'miser', name: '구두쇠 회계원', rarity: 1, cost: 120, wage: 6, desc: '상품마다 그 항구 첫 판매에 현금과 예금 1,000냥당 +15냥(최대 +450)',
+      casc: c => (c.fresh ? { kind: 'add', v: Math.min(450, Math.floor((c.s.cash + c.s.bank) / 1000) * 15) } : null) },
+    { id: 'apprentice', name: '풋내기 점원', rarity: 1, cost: 60, wage: 3, desc: '상품마다 그 항구 첫 판매에 +20냥, 그때마다 +10냥씩 성장(최대 +300)',
+      casc: c => (c.fresh ? { kind: 'add', v: Math.min(300, 20 + 10 * (c.s.appSales || 0)) } : null) },
+    // ── 극상(판을 바꾸는 효과) ──
+    { id: 'tycoon', name: '천하 거상', rarity: 4, cost: 2600, wage: 80, desc: '정산 연쇄 마지막에, 이번 판매에서 나온 곱셈 중 가장 큰 것을 한 번 더' },
+    { id: 'copier', name: '그림자 대리인', rarity: 4, cost: 1800, wage: 50, desc: '바로 오른쪽 직원의 효과를 한 번 더 발동' },
+    { id: 'seaking', name: '해상왕', rarity: 4, cost: 2200, wage: 60, desc: '이익 ×(1 + 0.12×이번 판 거래 실적). 실적은 입항마다 상품별 첫 판매만 1로 셈',
+      casc: c => ({ kind: 'mult', v: 1 + 0.12 * (c.s.freshSales || 0) }) },
+    { id: 'mint', name: '조폐관', rarity: 4, cost: 2000, wage: 60, desc: '이익 ×(1 + 현금과 예금 1만 냥당 0.1), 최대 ×4',
+      casc: c => ({ kind: 'mult', v: Math.min(4, 1 + 0.1 * Math.floor((c.s.cash + c.s.bank) / 10000)) }) },
+    { id: 'seal', name: '천하의 인장', rarity: 4, cost: 2400, wage: 70, desc: '다른 곱셈 직원의 배수가 1.5배로 커짐(×1.6 → ×1.9)' },
+  ];
+  // 등급: 1=정, 2=병, 3=을, 4=갑. [등급, 고용비, 기본급(월)]
+  const TIER_SET = {
+    haggler: [1, 100, 6], opener: [1, 110, 6], pepper: [1, 120, 7], rumor: [1, 130, 7], salt: [1, 70, 4], silversmith: [1, 110, 6],
+    smuggler: [1, 100, 6], porter: [1, 90, 4], chanty: [1, 110, 5], gambler: [1, 90, 4], auntie: [1, 120, 6], miser: [1, 120, 5], apprentice: [1, 60, 3],
+    silk: [2, 220, 12], porcelain: [2, 220, 12], customsman: [2, 320, 15], gunner: [2, 300, 15], wokou: [2, 360, 16], gaekju: [2, 300, 14],
+    owner: [2, 260, 13], oldsalt: [2, 200, 10], tongsa: [2, 200, 11],
+    chief: [3, 900, 40], cat: [3, 700, 25], clerk: [3, 650, 30], bulk: [3, 600, 28], assayer: [3, 600, 28], navigator: [3, 650, 30],
+    tycoon: [4, 2600, 80], copier: [4, 1800, 55], seaking: [4, 2200, 65], mint: [4, 2000, 60], seal: [4, 2400, 70],
+  };
+  EMPLOYEES.forEach((e) => { const t = TIER_SET[e.id]; if (t) { e.rarity = t[0]; e.cost = t[1]; e.wage = t[2]; } });
+  const TIERS = { 1: { name: '정', hanja: '丁', comm: 0.05 }, 2: { name: '병', hanja: '丙', comm: 0.10 }, 3: { name: '을', hanja: '乙', comm: 0.15 }, 4: { name: '갑', hanja: '甲', comm: 0.20 } };
+  const EMP = {}; EMPLOYEES.forEach(e => { EMP[e.id] = e; });
+
+  const CONSUMABLES = [
+    { id: 'bulletin', name: '급보', cost: 110, desc: '모든 항구의 지금 시세를 알아냄' },
+    { id: 'whisper', name: '탐문', cost: 60, desc: '고른 항구 하나의 지금 시세를 알아냄' },
+    { id: 'letter', name: '청탁서', cost: 80, desc: '다음 입항 때 압수와 강도를 면제' },
+    { id: 'pass', name: '통행증', cost: 90, desc: '다음 항해에서 해적을 만나지 않음' },
+  ].concat(GOODS.map(g => ({ id: 'ledger' + g.id, name: g.name + ' 장부', cost: 150, good: g.id,
+    desc: g.name + ' 이익 기본 배수 +0.5 (이번 판 내내, 최고 Lv3, 살 때마다 100냥씩 비싸짐)' })));
+  const CONS = {}; CONSUMABLES.forEach(c => { CONS[c.id] = c; });
+
+  const MAX_EMP = 5, MAX_CONS = 2;
+
+  // ── 난수 (상태에 저장되어 재현 가능) ───────────────────────
+  function rand(s) {
+    s.rng = (s.rng + 0x6D2B79F5) >>> 0;
+    let t = s.rng;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  }
+  function randInt(s, n) { return Math.floor(rand(s) * n); }
+  function gauss(s) { const u = rand(s) || 1e-9, v = rand(s); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+  function shuffle(s, arr) { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = randInt(s, i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+  // ── 기본 질의 ───────────────────────────────────────────
+  const has = (s, id) => s.employees.indexOf(id) >= 0;
+  const yearIdx = (m) => Math.floor(m / 12);
+  function dateLabel(m) { return (1580 + yearIdx(m)) + '년 ' + ((m % 12) + 1) + '월'; }
+  function normalPrice(p, g) { return GOODS[g].base * FACTOR[p][g]; }
+  function capacity(s) { return s.cap + (has(s, 'owner') ? 40 : 0) + (has(s, 'porter') ? 15 : 0) - s.guns * 2; }
+  function cargoUsed(s) { return s.hold.reduce((a, b) => a + b, 0); }
+  function freeSpace(s) { return capacity(s) - cargoUsed(s); }
+  const DEPTH_MULT = 2; // 시장 깊이: 이만큼 사면 값이 2배, 팔면 바닥(25%)까지
+  function depthOf(s, g) { return GOODS[g].depth * DEPTH_MULT * (has(s, 'gaekju') ? 2 : 1); }
+  function dist(a, b) { return Math.hypot(PORTS[a].x - PORTS[b].x, PORTS[a].y - PORTS[b].y); }
+  function travelMonths(s, a, b) {
+    const d = dist(a, b);
+    let m = d <= 330 ? 1 : d <= 660 ? 2 : 3;
+    if (has(s, 'navigator')) m = Math.max(1, m - 1);
+    return m;
+  }
+  function bossOfYear(s, y) { return BOSSES[s.bosses[Math.min(y, 2)]]; }
+  function bossActive(s, m) { if (m === undefined) m = s.month; return (m % 12) >= 8 ? bossOfYear(s, yearIdx(m)) : null; }
+  function closedPorts(s, m) {
+    const b = bossActive(s, m);
+    return b && b.id === 'plague' ? (s.plague[Math.min(yearIdx(m), 2)] || []) : [];
+  }
+  function nextDue(s) { return SCHEDULE[s.paid] || null; }
+  function cargoValue(s, p) { let v = 0; for (let g = 0; g < 5; g++) v += s.hold[g] * s.prices[p][g]; return v; }
+  function netWorth(s) {
+    let v = s.cash + s.bank;
+    for (let g = 0; g < 5; g++) v += s.hold[g] * normalPrice(s.port, g) * 0.8;
+    return Math.round(v);
+  }
+  function log(s, text, tone) { s.log.unshift({ m: s.month, text, tone: tone || '' }); if (s.log.length > 40) s.log.pop(); }
+
+  // 시장 충격은 지수형: 사면 P·e^(q/d), 팔면 P·e^(-q/d). 사고팔기가 정확히 역연산이라
+  // 같은 항구에서 어떤 순서로 왕복해도 손익 0(시세 조작으로 돈이 생기지 않음)
+  function buyCost(P, d, q) { return P * d * (Math.exp(q / d) - 1); }
+  function priceAfterBuy(P, d, q) { return P * Math.exp(q / d); }
+  function sellRev(P, d, q) { return P * d * (1 - Math.exp(-q / d)); }
+  function priceAfterSell(P, d, q) { return P * Math.exp(-q / d); }
+
+  // ── 새 게임 ─────────────────────────────────────────────
+  const DIFFS = { easy: { name: '견습', mult: 0.75, graces: 2 }, normal: { name: '상인', mult: 1, graces: 1 }, hard: { name: '거상', mult: 2, graces: 0, ramp: [1.3, 1.5, 2, 2.5, 3.5, 4.5, 6, 8, 10] } };
+  function dueAmt(s, d) {
+    const df = DIFFS[s.diff], i = SCHEDULE.indexOf(d);
+    const m = df && df.ramp && !s.customMult ? df.ramp[i] : (s.diffMult || 1);
+    return Math.round(d.amt * m / 50) * 50;
+  }
+  function totalDebt(s) { return SCHEDULE.reduce((a, d) => a + dueAmt(s, d), 0); }
+  // 빚을 다 갚은 뒤 남긴 순자산이 빚 총액의 몇 배인지로 칭호
+  const RANKS = [
+    { min: 0, name: '빚 갚은 행상', hanja: '行商' }, { min: 0.5, name: '객주', hanja: '客主' }, { min: 1, name: '거상', hanja: '巨商' },
+    { min: 3, name: '대상단주', hanja: '大商團' }, { min: 10, name: '바다의 왕', hanja: '海王' }, { min: 30, name: '천하제일상', hanja: '天下一商' },
+  ];
+  function finalRank(s) {
+    const ratio = netWorth(s) / totalDebt(s);
+    let r = RANKS[0]; for (const x of RANKS) if (ratio >= x.min) r = x;
+    const next = RANKS[RANKS.indexOf(r) + 1] || null;
+    return { ratio, rank: r, next };
+  }
+  function newGame(seed, opts) {
+    opts = opts || {};
+    const s = {
+      v: 1, seed: seed >>> 0, rng: seed >>> 0, diff: opts.diff || 'normal', diffMult: opts.mult || (DIFFS[opts.diff || 'normal'] || DIFFS.normal).mult, customMult: !!opts.mult, graces: opts.graces !== undefined ? opts.graces : (DIFFS[opts.diff || 'normal'] || DIFFS.normal).graces, carry: 0,
+      month: 0, port: 2, cash: 800, bank: 0, cap: 100, shipLv: 0, guns: 0,
+      hold: [0, 0, 0, 0, 0], basis: [0, 0, 0, 0, 0], ledger: [0, 0, 0, 0, 0],
+      employees: [], consumables: ['whisper'], starter: null, reward: null,
+      prices: [], known: [], shocks: [], rumors: [], surges: [],
+      paid: 0, bosses: [], plague: [], flags: { letter: false, pass: false },
+      silverSales: 0, owed: {}, firstSale: true, shop: null, pending: null, lastReveal: null,
+      over: null, win: false, log: [],
+      stats: { sales: 0, bestSale: 0, bestSteps: 0, booty: 0, voyages: 0 },
+    };
+    for (let p = 0; p < PORTS.length; p++) {
+      s.prices.push(GOODS.map((g, gi) => normalPrice(p, gi) * Math.exp(0.12 * gauss(s))));
+      s.known.push({ prices: GOODS.map((g, gi) => Math.round(normalPrice(p, gi))), month: -6 });
+    }
+    s.bosses = shuffle(s, BOSS_IDS).slice(0, 3);
+    for (let y = 0; y < 3; y++) s.plague.push(shuffle(s, [0, 1, 3, 4, 5]).slice(0, 2));
+    refreshKnown(s);
+    s.starter = shuffle(s, EMPLOYEES.filter((e) => e.rarity === 1 && e.casc).map((e) => e.id)).slice(0, 3);
+    s.shop = genShop(s);
+    s.lastReveal = { port: s.port, prev: null, now: s.prices[s.port].slice(), confirmed: [] };
+    log(s, '나하의 진 대인에게 큰 빚을 졌다. 3년 동안 아홉 번에 나눠 모두 ' + totalDebt(s).toLocaleString() + '냥을 갚아야 한다.', 'warn');
+    return s;
+  }
+
+  function refreshKnown(s) {
+    const now = s.month;
+    s.known[s.port] = { prices: s.prices[s.port].map(Math.round), month: now };
+    if (has(s, 'tongsa')) {
+      for (let p = 0; p < PORTS.length; p++) {
+        if (p !== s.port && dist(s.port, p) <= 330) s.known[p] = { prices: s.prices[p].map(Math.round), month: now };
+      }
+    }
+  }
+
+  // ── 시장 ───────────────────────────────────────────────
+  function targetPrice(s, p, g) {
+    let t = normalPrice(p, g);
+    for (const sh of s.shocks) if (sh.p === p && sh.g === g) t *= sh.mult;
+    return t;
+  }
+
+  function stepMarket(s) {
+    s.surges = (s.surges || []).map((x) => Object.assign({}, x, { left: x.left - 1 })).filter((x) => x.left > 0);
+    if (rand(s) < 0.14 + 0.04 * yearIdx(s.month)) {
+      const p = randInt(s, PORTS.length);
+      if (!s.surges.some((x) => x.p === p)) {
+        s.surges.push({ p, left: 3, month: s.month });
+        log(s, '경보: ' + PORTS[p].name + ' 근해에 해적이 들끓는다는 소식. 석 달 동안 이 항구를 오가는 뱃길은 해적이 세 배로 많다.', 'warn');
+      }
+    }
+    s.shocks.forEach(sh => { sh.left--; });
+    s.shocks = s.shocks.filter(sh => sh.left > 0);
+    let n = 0;
+    if (rand(s) < 0.55) n++;
+    if (rand(s) < 0.25) n++;
+    let heardFree = false;
+    for (let i = 0; i < n; i++) {
+      const p = randInt(s, PORTS.length), g = randInt(s, GOODS.length);
+      if (s.shocks.some(sh => sh.p === p && sh.g === g)) continue;
+      const up = rand(s) < 0.6;
+      const mult = up ? 2.0 + rand(s) * 1.6 : 0.3 + rand(s) * 0.2;
+      const sh = { p, g, up, mult, left: 2 + randInt(s, 3) };
+      s.shocks.push(sh);
+      s.prices[p][g] *= Math.pow(mult, 0.6);
+      if (heardFree || rand(s) < 0.3) {
+        heardFree = false;
+        hearRumor(s, sh);
+      }
+    }
+    for (let p = 0; p < PORTS.length; p++) {
+      for (let g = 0; g < GOODS.length; g++) {
+        const T = targetPrice(s, p, g), P = s.prices[p][g];
+        s.prices[p][g] = Math.max(1, P * Math.exp(0.35 * Math.log(T / P) + 0.09 * gauss(s)));
+      }
+    }
+  }
+
+  function hearRumor(s, sh) {
+    if (s.rumors.some(r => r.p === sh.p && r.g === sh.g && r.month >= s.month - 3)) return false;
+    s.rumors.unshift({ p: sh.p, g: sh.g, up: sh.up, month: s.month });
+    if (s.rumors.length > 8) s.rumors.pop();
+    log(s, '소문: ' + PORTS[sh.p].name + '에서 ' + GOODS[sh.g].name + ' 값이 ' + (sh.up ? '치솟는다' : '폭락했다') + '고 한다.', 'rumor');
+    return true;
+  }
+
+  // ── 매매 ───────────────────────────────────────────────
+  const LOCK = { ok: false, reason: '해적 조우를 먼저 처리해야 합니다' };
+  const okNum = (x) => typeof x === 'number' && Number.isFinite(x);
+  const okGood = (g) => Number.isInteger(g) && g >= 0 && g < GOODS.length;
+  function maxBuy(s, g) {
+    const P = s.prices[s.port][g], d = depthOf(s, g);
+    let hi = Math.max(0, freeSpace(s)), lo = 0;
+    let budget = s.cash - owedTotal(s);
+    const nd = nextDue(s);
+    if (nd && nd.due <= s.month) budget -= Math.max(0, dueAmount(s, nd).total - s.bank); // 이번 달 상환금은 남긴다(어디로 출항하든 징수)
+    while (lo < hi) { const mid = Math.ceil((lo + hi) / 2); if (buyCost(P, d, mid) <= budget) lo = mid; else hi = mid - 1; }
+    return lo;
+  }
+
+  function buy(s, g, q) {
+    if (s.pending) return LOCK;
+    if (!okGood(g) || !okNum(q)) return { ok: false, reason: '수량이 잘못됐습니다' };
+    q = Math.min(Math.floor(q), maxBuy(s, g));
+    if (q <= 0) return { ok: false, reason: freeSpace(s) <= 0 ? '화물칸이 꽉 찼습니다' : owedTotal(s) > 0 ? '현금이 부족합니다(밀린 월급 ' + Math.round(owedTotal(s)) + '냥은 남겨 둡니다)' : (nextDue(s) && nextDue(s).due <= s.month ? '현금이 부족합니다(이번 달 상환금은 남겨 둡니다)' : '현금이 부족합니다') };
+    const P = s.prices[s.port][g], d = depthOf(s, g);
+    const cost = buyCost(P, d, q);
+    s.cash -= cost;
+    s.basis[g] = (s.basis[g] * s.hold[g] + cost) / (s.hold[g] + q);
+    s.hold[g] += q;
+    s.boughtVisit = s.boughtVisit || [0, 0, 0, 0, 0];
+    s.boughtVisit[g] += q;
+    s.prices[s.port][g] = priceAfterBuy(P, d, q);
+    s.known[s.port].prices[g] = Math.round(s.prices[s.port][g]);
+    return { ok: true, q, cost };
+  }
+
+  function sellQuote(s, g, q) {
+    const P = s.prices[s.port][g];
+    const rival = bossActive(s) && bossActive(s).id === 'rival' ? 0.8 : 1;
+    return sellRev(P, depthOf(s, g), q) * rival;
+  }
+
+  // 판매 정산 연쇄: 기본 이익 → 장부 → 직원(왼쪽부터)
+  function sell(s, g, q) {
+    if (s.pending) return LOCK;
+    if (!okGood(g) || !okNum(q)) return { ok: false, reason: '수량이 잘못됐습니다' };
+    q = Math.min(Math.floor(q), s.hold[g]);
+    if (q <= 0) return { ok: false, reason: '팔 물건이 없습니다' };
+    const P = s.prices[s.port][g], d = depthOf(s, g);
+    const rival = bossActive(s) && bossActive(s).id === 'rival' ? 0.8 : 1;
+    const rev = sellRev(P, d, q) * rival;
+    const cost = s.basis[g] * q;
+    let v = rev - cost;
+    const steps = [{ kind: 'base', v, rev, cost, label: GOODS[g].name + ' ' + q + GOODS[g].unit + ' 매각' }];
+    if (rival < 1) steps.push({ kind: 'boss', label: '경쟁 대상단: 판매가 −20%', v });
+    if (has(s, 'gaekju')) {
+      const revRaw = sellRev(P, GOODS[g].depth * DEPTH_MULT, q) * rival;
+      steps.push({ kind: 'info', emp: 'gaekju', idx: s.employees.indexOf('gaekju'), amount: rev - revRaw, v, label: '시장 충격 완화' });
+    }
+    if (s.ledger[g] > 0) {
+      const m = 1 + 0.5 * s.ledger[g];
+      if (v > 0) { v *= m; steps.push({ kind: 'ledger', mult: m, v, label: GOODS[g].name + ' 장부 Lv' + s.ledger[g] }); }
+      else steps.push({ kind: 'skip', v, label: GOODS[g].name + ' 장부: 손실이라 미발동' });
+    }
+    const n = s.employees.length; const wasFirst = s.firstSale;
+    s.soldVisit = s.soldVisit || {};
+    s.boughtVisit = s.boughtVisit || [0, 0, 0, 0, 0];
+    const local = Math.min(q, s.boughtVisit[g]); // 이번 입항에 이 항구에서 산 물량
+    s.boughtVisit[g] -= local;
+    const carried = q - local;                    // 다른 항구에서 실어 온 물량
+    const fresh = !s.soldVisit[g] && carried > 0;
+    const sealOn = has(s, 'seal');
+    let maxMult = { v: 1, name: '' };
+    const comm = {}; // 직원별 성과급
+    const addComm = (who, gain) => { if (gain > 0) comm[who] = (comm[who] || 0) + gain * TIERS[EMP[who].rarity].comm; };
+    const runEmp = (id, idx, tag, payTo) => {
+      const e = EMP[id];
+      if (!e.casc) return;
+      payTo = payTo || id;
+      const r = e.casc({ s, g, q: carried, n, leftmost: idx === 0, rightmost: idx === n - 1, first: wasFirst && carried > 0, fresh, rand: () => rand(s) });
+      if (!r) return;
+      const name = e.name + (tag || '');
+      if (r.kind === 'miss') { steps.push({ kind: 'miss', emp: id, idx, v, label: name + ': 꽝' }); return; }
+      if (r.kind === 'add') { v += r.v; addComm(payTo, r.v); steps.push({ kind: 'add', emp: id, idx, amount: r.v, v, label: name }); return; }
+      if (r.kind === 'mult') {
+        let m = r.v;
+        if (sealOn && m > 1) m = 1 + (m - 1) * 1.5;
+        if (m > maxMult.v) maxMult = { v: m, name: e.name };
+        if (v > 0) { addComm(payTo, v * (m - 1)); v *= m; steps.push({ kind: 'mult', emp: id, idx, mult: m, v, label: name + (sealOn && m !== r.v ? ' (인장)' : '') }); }
+        else steps.push({ kind: 'skip', emp: id, idx, v, label: name + ': 손실이라 미발동' });
+      }
+    };
+    s.employees.forEach((id, idx) => {
+      if (id === 'copier') {
+        const nx = s.employees[idx + 1];
+        if (nx && nx !== 'copier' && EMP[nx].casc) runEmp(nx, idx, ' (그림자 대리인이 따라 함)', 'copier');
+        return;
+      }
+      runEmp(id, idx);
+    });
+    if (has(s, 'tycoon') && maxMult.v > 1 && v > 0) {
+      const ti = s.employees.indexOf('tycoon');
+      steps.push({ kind: 'banner', emp: 'tycoon', idx: ti, v, label: '천하 거상: ' + maxMult.name + '의 곱셈을 한 번 더!' });
+      addComm('tycoon', v * (maxMult.v - 1)); v *= maxMult.v;
+      steps.push({ kind: 'mult', emp: 'tycoon', idx: ti, mult: maxMult.v, v, label: '천하 거상 (' + maxMult.name + ' 따라 함)' });
+    }
+    const commTotal = Object.values(comm).reduce((a, b) => a + b, 0);
+    if (commTotal > 0) {
+      v -= commTotal;
+      steps.push({ kind: 'comm', amount: -commTotal, v, label: '성과급(직원들 몫)', detail: comm });
+      s.stats.commission = (s.stats.commission || 0) + commTotal;
+    }
+    const payout = Math.max(0, cost + v);
+    s.cash += payout;
+    s.hold[g] -= q;
+    if (s.hold[g] === 0) s.basis[g] = 0;
+    s.prices[s.port][g] = priceAfterSell(P, d, q);
+    s.known[s.port].prices[g] = Math.round(s.prices[s.port][g]);
+    if (fresh) {
+      if (g === 1) s.silverSales++;
+      s.freshSales = (s.freshSales || 0) + 1;
+      if (has(s, 'apprentice')) s.appSales = (s.appSales || 0) + 1;
+      s.portSales = (s.portSales || 0) + 1;
+      s.soldVisit[g] = true;
+    }
+    s.firstSale = false;
+    const profit = payout - cost;
+    s.lastSale = { g, q, base: steps[0].v, first: wasFirst, profit };
+    s.stats.sales++;
+    if (profit > s.stats.bestSale) s.stats.bestSale = Math.round(profit);
+    s.stats.bestSteps = Math.max(s.stats.bestSteps, steps.length);
+    return { ok: true, g, q, steps, payout, profit, rev, cost };
+  }
+
+  // ── 상점, 직원, 소모품 ───────────────────────────────────
+  function genShop(s) {
+    const pool = EMPLOYEES.filter(e => !has(s, e.id) && (e.rarity < 4 || yearIdx(s.month) >= 1));
+    const emps = [];
+    for (let i = 0; i < 3 && pool.length; i++) {
+      const r = rand(s);
+      const w = yearIdx(s.month) >= 1 ? [0.04, 0.18, 0.50] : [0, 0.08, 0.38]; // 누적: 갑, 을, 병 (나머지 정)
+      const want = r < w[0] ? 4 : r < w[1] ? 3 : r < w[2] ? 2 : 1;
+      let cands = pool.filter(e => e.rarity === want && emps.indexOf(e.id) < 0);
+      if (!cands.length) cands = pool.filter(e => e.rarity < 4 && emps.indexOf(e.id) < 0);
+      if (!cands.length) break;
+      emps.push(cands[randInt(s, cands.length)].id);
+    }
+    const cons = [];
+    for (let i = 0; i < 2; i++) cons.push(CONSUMABLES[randInt(s, CONSUMABLES.length)].id);
+    return { emps, cons, rerolls: 0 };
+  }
+  function pickStarter(s, i) {
+    if (!s.starter || !s.starter[i]) return { ok: false, reason: '고를 시작 직원이 없습니다' };
+    const id = s.starter[i]; s.employees.push(id); s.starter = null;
+    s.shop.emps = s.shop.emps.filter((x) => x !== id);
+    log(s, '첫 직원으로 ' + EMP[id].name + '을(를) 데려왔다.', 'good');
+    return { ok: true, id };
+  }
+  function cascadeValue(s, emps, g, q, v0, first) {
+    let v = v0;
+    if (s.ledger[g] > 0 && v > 0) v *= 1 + 0.5 * s.ledger[g];
+    const n = emps.length;
+    emps.forEach((id, idx) => {
+      const e = EMP[id]; if (!e.casc) return;
+      let r;
+      if (id === 'cat') r = { kind: 'mult', v: 1.5 }; // 기대값
+      else r = e.casc({ s, g, q, n, leftmost: idx === 0, rightmost: idx === n - 1, first, rand: () => 0.99 });
+      if (!r || r.kind === 'miss') return;
+      if (r.kind === 'add') v += r.v;
+      else if (r.kind === 'mult' && v > 0) v *= r.v;
+    });
+    return v;
+  }
+  function previewHire(s, id) {
+    const ls = s.lastSale; if (!ls || ls.base <= 0) return null;
+    const e = EMP[id]; if (!e.casc) return null;
+    const now = cascadeValue(s, s.employees, ls.g, ls.q, ls.base, ls.first);
+    let best = -Infinity;
+    for (let pos = 0; pos <= s.employees.length; pos++) {
+      const arr = s.employees.slice(); arr.splice(pos, 0, id);
+      if (arr.length > MAX_EMP) continue;
+      best = Math.max(best, cascadeValue(s, arr, ls.g, ls.q, ls.base, ls.first));
+    }
+    if (best === -Infinity) return null;
+    return { delta: Math.round((best - now) * (1 - TIERS[e.rarity].comm)), g: ls.g, q: ls.q, expected: id === 'cat' };
+  }
+  function genReward(s, d) {
+    const opts = [{ type: 'cap', amount: 30, label: '화물칸 +30', desc: '진 대인이 쓰던 거룻배를 넘겨준다. 화물칸이 30칸 늘어난다.' }];
+    const pool = EMPLOYEES.filter((e) => e.rarity === 2 && !has(s, e.id));
+    if (pool.length) {
+      const id = pool[randInt(s, pool.length)].id;
+      opts.push({ type: 'emp', id, label: '병급: ' + EMP[id].name + ' 무료', desc: EMP[id].name + '을(를) 고용비 없이 데려온다(자리가 있어야 함). ' + EMP[id].desc });
+    }
+    if (d.boss !== undefined && rand(s) < 0.4) {
+      const myth = EMPLOYEES.filter((e) => e.rarity === 4 && !has(s, e.id));
+      if (myth.length) {
+        const id = myth[randInt(s, myth.length)].id, price = Math.round(EMP[id].cost / 2);
+        opts.push({ type: 'emp', id, myth: true, price, label: '갑급: ' + EMP[id].name + ' (고용비 절반 ' + price.toLocaleString() + '냥)', desc: '결산 보스를 넘긴 상인을 찾아온 사람. ' + EMP[id].desc + ' 성과급 20%.' });
+      }
+    }
+    const cash = Math.round(dueAmt(s, d) * 0.2);
+    opts.push({ type: 'cash', amount: cash, label: '현금 ' + cash.toLocaleString() + '냥', desc: '이번 상환액의 20%를 돌려받는다.' });
+    return { options: opts, from: d.due };
+  }
+  function pickReward(s, i) {
+    if (s.pending) return LOCK;
+    const r = s.reward; if (!r || !r.options[i]) return { ok: false, reason: '고를 결산 보상이 없습니다' };
+    const o = r.options[i];
+    if (o.type === 'emp' && s.employees.length >= MAX_EMP) return { ok: false, reason: '직원 자리가 꽉 찼습니다. 먼저 한 명을 내보내세요' };
+    if (o.price && s.cash < o.price) return { ok: false, reason: '현금이 부족합니다(' + o.price.toLocaleString() + '냥 필요)' };
+    if (o.price) s.cash -= o.price;
+    if (o.type === 'cap') s.cap += o.amount;
+    else if (o.type === 'emp') s.employees.push(o.id);
+    else s.cash += o.amount;
+    s.reward = null;
+    log(s, '결산 보상: ' + o.label + '.', 'good');
+    return { ok: true, option: o };
+  }
+  // 인맥 정리(합성): 직원 셋을 내보내고 그 소개로 상위 등급 한 명. 점수 정1 병2 을3 갑4
+  const FUSE_TABLE = { 3: [0.75, 0.22, 0.03], 4: [0.60, 0.33, 0.07], 5: [0.45, 0.43, 0.12], 6: [0.25, 0.55, 0.20], 7: [0.10, 0.60, 0.30], 8: [0, 0.60, 0.40] };
+  function fuseOdds(s, idxs) {
+    if (!Array.isArray(idxs) || idxs.length !== 3 || idxs.some((i) => !Number.isInteger(i)) || new Set(idxs).size !== 3 || idxs.some((i) => !s.employees[i])) return null;
+    const pts = idxs.reduce((a, i) => a + EMP[s.employees[i]].rarity, 0);
+    let [b, e, g] = FUSE_TABLE[Math.min(8, pts)];
+    if (yearIdx(s.month) === 0) { e += g / 2; g /= 2; }
+    const owedGone = idxs.reduce((a, i) => a + ((s.owed && s.owed[s.employees[i]]) || 0), 0);
+    return { pts, odds: { 2: b, 3: e, 4: g }, fee: 100 + 50 * pts + Math.round(owedGone), owedGone: Math.round(owedGone) };
+  }
+  function fuse(s, idxs) {
+    const o = fuseOdds(s, idxs);
+    if (s.pending) return LOCK;
+    if (!o) return { ok: false, reason: '직원 셋을 골라야 합니다' };
+    if (s.cash < o.fee) return { ok: false, reason: '소개비' + (o.owedGone ? '와 밀린 월급' : '') + ' ' + o.fee + '냥이 모자랍니다' };
+    const gone = idxs.map((i) => s.employees[i]);
+    const r = rand(s);
+    let tier = r < o.odds[4] ? 4 : r < o.odds[4] + o.odds[3] ? 3 : 2;
+    const remaining = s.employees.filter((id, i) => idxs.indexOf(i) < 0);
+    let pool = EMPLOYEES.filter((e) => e.rarity === tier && remaining.indexOf(e.id) < 0 && gone.indexOf(e.id) < 0);
+    while (!pool.length && tier > 2) { tier--; pool = EMPLOYEES.filter((e) => e.rarity === tier && remaining.indexOf(e.id) < 0 && gone.indexOf(e.id) < 0); }
+    if (!pool.length) return { ok: false, reason: '소개받을 사람이 없습니다' };
+    const id = pool[randInt(s, pool.length)].id;
+    s.cash -= o.fee;
+    gone.forEach((g) => { if (s.owed && s.owed[g]) delete s.owed[g]; });
+    s.employees = remaining.concat([id]);
+    dumpOverflow(s);
+    s.stats.fusions = (s.stats.fusions || 0) + 1;
+    log(s, gone.map((g) => EMP[g].name).join(', ') + '을(를) 내보내고 그 소개로 ' + TIERS[EMP[id].rarity].name + '급 ' + EMP[id].name + '을(를) 데려왔다.', 'good');
+    return { ok: true, id, tier: EMP[id].rarity, gone, fee: o.fee };
+  }
+  function rerollCost(s) { return 40 + 20 * s.shop.rerolls; }
+  function reroll(s) {
+    if (s.pending) return LOCK;
+    const c = rerollCost(s);
+    if (s.cash < c) return { ok: false, reason: '현금이 부족합니다' };
+    s.cash -= c; const r = s.shop.rerolls + 1; s.shop = genShop(s); s.shop.rerolls = r;
+    return { ok: true };
+  }
+  function hire(s, i) {
+    const id = s.shop.emps[i]; if (!id) return { ok: false };
+    const e = EMP[id];
+    if (s.pending) return LOCK;
+    if (has(s, id)) return { ok: false, reason: '이미 일하고 있는 사람입니다' };
+    if (s.employees.length >= MAX_EMP) return { ok: false, reason: '직원 자리가 꽉 찼습니다. 먼저 한 명을 내보내세요' };
+    if (s.cash < e.cost) return { ok: false, reason: '현금이 부족합니다' };
+    s.cash -= e.cost; s.employees.push(id); s.shop.emps.splice(i, 1);
+    log(s, e.name + '을(를) 고용했다.');
+    if (id === 'tongsa') refreshKnown(s);
+    return { ok: true, id };
+  }
+  function fire(s, idx) {
+    if (s.pending) return LOCK;
+    const id = s.employees[idx]; if (!id) return { ok: false, reason: '그 자리에 직원이 없습니다' };
+    if (id === 'owner' && cargoUsed(s) > capacity(s) - 40) return { ok: false, reason: '선주가 떠나면 화물이 넘칩니다. 먼저 짐을 줄이세요' };
+    const owe = (s.owed && s.owed[id]) || 0;
+    if (owe > s.cash + s.bank) return { ok: false, reason: '밀린 월급 ' + Math.round(owe) + '냥을 먼저 줘야 내보낼 수 있습니다' };
+    if (owe) { const fc = Math.min(s.cash, owe); s.cash -= fc; s.bank -= owe - fc; delete s.owed[id]; }
+    s.employees.splice(idx, 1);
+    log(s, EMP[id].name + '을(를) 내보냈다.');
+    return { ok: true };
+  }
+  function moveEmp(s, idx, dir) {
+    if (!(idx >= 0 && idx < s.employees.length) || (dir !== 1 && dir !== -1)) return { ok: false, reason: '자리 번호가 잘못됐습니다' };
+    const j = idx + dir;
+    if (j < 0 || j >= s.employees.length) return { ok: false };
+    const a = s.employees; [a[idx], a[j]] = [a[j], a[idx]];
+    return { ok: true };
+  }
+  const LEDGER_MAX = 3;
+  function consCost(s, id) {
+    const c = CONS[id];
+    if (c.good === undefined) return (id === 'pass' || id === 'letter') ? Math.round(c.cost * (1 + 1.5 * yearIdx(s.month))) : c.cost; // 통행증, 청탁서는 해마다 비싸짐
+    const owned = s.ledger[c.good] + s.consumables.filter((x) => x === id).length;
+    return c.cost + 100 * owned;
+  }
+  function buyCons(s, i) {
+    if (s.pending) return LOCK;
+    const id = s.shop.cons[i]; if (!id) return { ok: false };
+    if (s.consumables.length >= MAX_CONS) return { ok: false, reason: '소모품 자리가 꽉 찼습니다' };
+    const c = CONS[id];
+    if (c.good !== undefined && s.ledger[c.good] + s.consumables.filter((x) => x === id).length >= LEDGER_MAX) return { ok: false, reason: GOODS[c.good].name + ' 장부는 Lv' + LEDGER_MAX + '이 최고입니다' };
+    const cost = consCost(s, id);
+    if (s.cash < cost) return { ok: false, reason: '현금이 부족합니다' };
+    s.cash -= cost; s.consumables.push(id); s.shop.cons.splice(i, 1);
+    return { ok: true, id };
+  }
+  function useCons(s, idx, port) {
+    if (s.pending) return LOCK;
+    const id = s.consumables[idx]; if (!id) return { ok: false };
+    const c = CONS[id];
+    let msg = '';
+    if (id === 'bulletin') {
+      for (let p = 0; p < PORTS.length; p++) s.known[p] = { prices: s.prices[p].map(Math.round), month: s.month };
+      msg = '급보가 도착했다. 모든 항구의 지금 시세를 알았다.';
+    } else if (id === 'whisper') {
+      if (!Number.isInteger(port) || port < 0 || port >= PORTS.length) return { ok: false, needPort: true, reason: '시세를 알아볼 항구를 고르세요' };
+      s.known[port] = { prices: s.prices[port].map(Math.round), month: s.month };
+      msg = '탐문을 보냈다. ' + PORTS[port].name + '의 지금 시세를 알았다.';
+    } else if (id === 'letter') { s.flags.letter = true; msg = '청탁서를 품었다. 다음 입항은 안전하다.'; }
+    else if (id === 'pass') { s.flags.pass = true; msg = '통행증을 받았다. 다음 항해에 해적은 없다.'; }
+    else if (c.good !== undefined) {
+      if (s.ledger[c.good] >= LEDGER_MAX) return { ok: false, reason: GOODS[c.good].name + ' 장부는 Lv' + LEDGER_MAX + '이 최고입니다' };
+      s.ledger[c.good]++;      msg = GOODS[c.good].name + ' 장부 Lv' + s.ledger[c.good] + '. 이익 기본 배수 ×' + (1 + 0.5 * s.ledger[c.good]).toFixed(1) + '.';
+    }
+    s.consumables.splice(idx, 1);
+    if (msg) log(s, msg, 'good');
+    return { ok: true, id, msg };
+  }
+
+  function gunCost(s) { return 120 + 10 * s.guns; }
+  function buyGun(s) {
+    if (s.pending) return LOCK;
+    const c = gunCost(s);
+    if (freeSpace(s) < 2) return { ok: false, reason: '대포를 놓을 자리(2칸)가 없습니다' };
+    if (s.cash < c) return { ok: false, reason: '현금이 부족합니다' };
+    s.cash -= c; s.guns++; return { ok: true };
+  }
+  function shipCost(s) { return Math.round(500 * Math.pow(1.8, s.shipLv) / 10) * 10; } // 개조할수록 1.8배씩
+  function upgradeShip(s) {
+    if (s.pending) return LOCK;
+    if (!PORTS[s.port].yard) return { ok: false, reason: '조선소는 나하, 나가사키, 마카오에만 있습니다' };
+    const c = shipCost(s);
+    if (s.cash < c) return { ok: false, reason: '현금이 부족합니다' };
+    s.cash -= c; s.shipLv++; s.cap += 50;
+    log(s, '배를 개조했다. 화물칸 +50.', 'good');
+    return { ok: true };
+  }
+  function bankMove(s, amt) { // +예금 / −인출
+    if (s.pending) return LOCK;
+    if (!okNum(amt)) return { ok: false, reason: '금액이 잘못됐습니다' };
+    if (!PORTS[s.port].home) return { ok: false, reason: '은행은 나하에만 있습니다' };
+    if (amt > 0) { amt = Math.min(amt, s.cash); s.cash -= amt; s.bank += amt; }
+    else { amt = Math.min(-amt, s.bank); s.bank -= amt; s.cash += amt; }
+    return { ok: true };
+  }
+
+  // ── 상환 ───────────────────────────────────────────────
+  function dueAmount(s, d) {
+    let amt = dueAmt(s, d) + (s.carry || 0), tax = 0;
+    if (d.boss !== undefined && s.bosses[d.boss] === 'auditor') tax = Math.round(cargoValue(s, s.port) * 0.25);
+    return { amt, tax, total: amt + tax };
+  }
+  // 새 달(newMonth)로 넘어가기 전에 지나가는 상환일을 정산
+  function settle(s, newMonth) {
+    const results = [];
+    while (s.paid < SCHEDULE.length && SCHEDULE[s.paid].due < newMonth) {
+      const d = SCHEDULE[s.paid];
+      const { amt, tax, total } = dueAmount(s, d);
+      let have = s.cash + s.bank;
+      // 연체 기회가 남았으면 이번엔 걷지 않고 미룬다(밑천과 화물은 그대로)
+      if (have < total && s.graces > 0 && !d.final) {
+        s.graces--;
+        s.carry = Math.round(total * 1.2 / 10) * 10;
+        const r = { due: d, amt, tax, total, have, ok: false, ratio: have / total, bonus: null, fire: null, grace: { short: Math.round(total - have), carry: s.carry, left: s.graces } };
+        s.paid++;
+        log(s, '상환 ' + Math.round(total).toLocaleString() + '냥을 연체했다. 다음 상환에 ' + s.carry.toLocaleString() + '냥이 얹힌다(남은 연체 ' + s.graces + '번).', 'bad');
+        results.push(r); continue;
+      }
+      let fire = null;
+      if (have < total && cargoUsed(s) > 0) {
+        fire = { amount: 0, goods: [] };
+        const order = [0, 1, 2, 3, 4].sort((a, b) => s.prices[s.port][b] - s.prices[s.port][a]);
+        for (const g of order) {
+          if (have >= total) break;
+          const unit = s.prices[s.port][g] * 0.5;
+          const need = Math.ceil((total - have) / unit);
+          const q = Math.min(s.hold[g], need);
+          if (q <= 0) continue;
+          s.hold[g] -= q; if (!s.hold[g]) s.basis[g] = 0;
+          s.cash += q * unit; have += q * unit; fire.amount += q * unit; fire.goods.push(GOODS[g].name + ' ' + q + GOODS[g].unit);
+        }
+        log(s, '현금이 모자라 수금꾼이 ' + fire.goods.join(', ') + '을(를) 시세 절반에 급매했다(' + Math.round(fire.amount).toLocaleString() + '냥).', 'bad');
+      }
+      const r = { due: d, amt, tax, total, have, ok: have >= total, ratio: have / total, bonus: null, fire };
+      if (!r.ok) { s.over = 'bankrupt'; results.push(r); log(s, '상환 실패. 진 대인의 사람들이 배를 압류했다.', 'bad'); break; }
+      s.carry = 0;
+      let left = total; const fromCash = Math.min(s.cash, left); s.cash -= fromCash; left -= fromCash; s.bank -= left; clampMoney(s);
+      if (r.ratio >= 2) {
+        if (s.consumables.length < MAX_CONS) { const id = CONSUMABLES[randInt(s, CONSUMABLES.length)].id; s.consumables.push(id); r.bonus = { cons: id }; }
+        else { const c = Math.round(dueAmt(s, d) * 0.1); s.cash += c; r.bonus = { cash: c }; }
+      }
+      s.paid++;
+      if (s.reward) { const c = s.reward.options.find((o) => o.type === 'cash'); if (c) { s.cash += c.amount; log(s, '고르지 않은 결산 보상을 현금 ' + c.amount.toLocaleString() + '냥으로 받았다.'); } s.reward = null; }
+      if (!d.final) s.reward = genReward(s, d);
+      log(s, (1580 + yearIdx(d.due)) + '년 ' + ((d.due % 12) + 1) + '월 상환 ' + total.toLocaleString() + '냥 완료.', 'good');
+      results.push(r);
+      if (d.final) { s.win = true; break; }
+    }
+    return results;
+  }
+
+  // ── 항해 ───────────────────────────────────────────────
+  function canTravel(s, dest) {
+    if (s.pending) return LOCK;
+    if (!Number.isInteger(dest) || dest < 0 || dest >= PORTS.length) return { ok: false, reason: '항구 번호가 잘못됐습니다' };
+    if (dest === s.port) return { ok: false, reason: '이미 이 항구에 있습니다' };
+    if (closedPorts(s).indexOf(dest) >= 0) return { ok: false, reason: '역병으로 봉쇄된 항구입니다' };
+    { const m = travelMonths(s, s.port, dest); for (let i = 1; i <= m; i++) if (closedPorts(s, s.month + i).indexOf(dest) >= 0) return { ok: false, reason: '도착할 무렵 역병으로 봉쇄되는 항구입니다' }; }
+    if (cargoUsed(s) > capacity(s)) return { ok: false, reason: '화물이 화물칸을 넘칩니다' };
+    return { ok: true, months: travelMonths(s, s.port, dest) };
+  }
+
+  function loseCargo(s, lo, hi) {
+    const lost = [0, 0, 0, 0, 0];
+    for (let g = 0; g < 5; g++) {
+      const l = Math.round(s.hold[g] * (lo + rand(s) * (hi - lo)));
+      s.hold[g] -= l; lost[g] = l; if (s.hold[g] === 0) s.basis[g] = 0;
+    }
+    return lost;
+  }
+  function lostText(lost) {
+    const parts = []; lost.forEach((l, g) => { if (l > 0) parts.push(GOODS[g].name + ' ' + l + GOODS[g].unit); });
+    return parts.length ? parts.join(', ') : '잃은 화물 없음';
+  }
+
+  function startVoyage(s, dest) {
+    const t = canTravel(s, dest); if (!t.ok) return t;
+    const months = t.months;
+    const settled = settle(s, s.month + months);
+    const wageLeft = s.over || s.win ? [] : payWages(s);
+    if (s.over || s.win) return { ok: true, settled, ended: true };
+    const events = [];
+    const boss = bossActive(s);
+    if (!has(s, 'navigator')) {
+      for (let i = 0; i < months; i++) {
+        if (rand(s) < stormMonthly(s, s.month + i)) {
+          const lost = has(s, 'chanty') ? loseCargo(s, 0.05, 0.125) : loseCargo(s, 0.1, 0.25);
+          let text = lost.some((x) => x > 0) ? '폭풍을 만났다. ' + lostText(lost) + ' 유실.' : '폭풍을 만났지만 화물은 무사했다.';
+          if (rand(s) < 0.34) {
+            const opts = [0, 1, 2, 3, 4, 5].filter(p => p !== dest && p !== s.port && closedPorts(s, s.month + months).indexOf(p) < 0);
+            if (opts.length) { dest = opts[randInt(s, opts.length)]; text += ' 항로를 벗어나 ' + PORTS[dest].name + '(으)로 떠밀려 간다.'; }
+          }
+          events.push({ type: 'storm', text }); log(s, text, 'bad');
+        }
+      }
+    }
+    s.stats.voyages++;
+    let pirate = null;
+    if (s.flags.pass) { s.flags.pass = false; events.push({ type: 'pass', text: '통행증 덕분에 해적이 길을 비켰다.' }); }
+    else {
+      const p = pirateRisk(s, s.port, dest, months);
+      if (rand(s) < p) {
+        const fleet = fleetSize(s);
+        if (has(s, 'wokou')) {
+          const toll = Math.round(Math.min(s.cash, Math.max(20, cargoValue(s, s.port) * 0.05))); s.cash -= toll;
+          const text = '해적 ' + fleet + '척. 왜구 연줄이 통행세 ' + toll.toLocaleString() + '냥으로 정리했다.';
+          events.push({ type: 'toll', text }); log(s, text);
+        } else pirate = fleet;
+      }
+    }
+    if (pirate) { s.pending = { type: 'pirate', fleet: pirate, dest, months }; return { ok: true, settled, events, pirate, wageLeft }; }
+    const arrival = finishVoyage(s, dest, months);
+    return { ok: true, settled, events, arrival, wageLeft };
+  }
+
+  // 월간 해적 확률: 해마다 증가, 창궐 항로 3배, 비싼 화물일수록 증가(최대 2배), 대포는 억지력(1문당 −4%, 최대 −60%)
+  function pirateMonthly(s, from, to, m) {
+    if (m === undefined) m = s.month;
+    let base = [0.06, 0.12, 0.16][Math.min(2, yearIdx(m))];
+    if ((s.surges || []).some((x) => x.p === from || x.p === to)) base *= 3;
+    const b = bossActive(s, m); if (b && b.id === 'pirateKing') base *= 2.5;
+    base *= 1 + Math.min(1, cargoValue(s, s.port) / 20000);
+    base *= Math.max(0.4, 1 - 0.04 * s.guns);
+    return Math.min(0.8, base);
+  }
+  function stormMonthly(s, m) {
+    if (m === undefined) m = s.month;
+    if (has(s, 'navigator')) return 0;
+    let p = 0.07;
+    if ([6, 7, 8].indexOf(m % 12) >= 0) p *= 2;
+    p *= 1 + Math.min(1, cargoValue(s, s.port) / 30000);
+    return Math.min(0.5, p);
+  }
+  function stormRisk(s, months) { let q = 1; for (let i = 0; i < months; i++) q *= 1 - stormMonthly(s, s.month + i); return 1 - q; }
+  function pirateRisk(s, from, to, months) { let q = 1; for (let i = 0; i < months; i++) q *= 1 - pirateMonthly(s, from, to, s.month + i); return 1 - q; }
+  function fleetSize(s) {
+    const b = bossActive(s);
+    return Math.min(40, 2 + randInt(s, 4) + yearIdx(s.month) * 3 + Math.floor(cargoValue(s, s.port) / 5000) + (b && b.id === 'pirateKing' ? 5 : 0));
+  }
+  function pirateOdds(s, fleet) {
+    const power = s.guns * (has(s, 'gunner') ? 2 : 1);
+    return {
+      fight: power > 0 ? Math.pow(power, 1.5) / (Math.pow(power, 1.5) + Math.pow(fleet * 0.8, 1.5)) : 0,
+      run: Math.max(0.15, Math.min(0.8, 0.6 - fleet * 0.03)),
+      toll: Math.round(Math.max(50, cargoValue(s, s.port) * 0.2)),
+    };
+  }
+
+  function resolvePirate(s, choice) {
+    const pd = s.pending; if (!pd || pd.type !== 'pirate') return { ok: false };
+    const o = pirateOdds(s, pd.fleet);
+    const out = { choice, fleet: pd.fleet };
+    if (choice === 'fight') {
+      if (rand(s) < o.fight) {
+        const booty = Math.round(pd.fleet * (120 + 160 * yearIdx(s.month)) * (has(s, 'gunner') ? 1.5 : 1) * (0.8 + 0.4 * rand(s)));
+        s.cash += booty; s.stats.booty += booty;
+        const g = randInt(s, 4), take = Math.min(freeSpace(s), pd.fleet * 4);
+        if (take > 0) { s.basis[g] = (s.basis[g] * s.hold[g]) / (s.hold[g] + take); s.hold[g] += take; }
+        out.result = 'win'; out.booty = booty; out.text = '해적 ' + pd.fleet + '척을 격파했다. 약탈품 ' + booty.toLocaleString() + '냥' + (take > 0 ? '과 ' + GOODS[g].name + ' ' + take + GOODS[g].unit + '(원가 0)' : '') + '.';
+        log(s, out.text, 'good');
+      } else {
+        const lost = loseCargo(s, 0.5, 0.8);
+        if (s.guns > 0) s.guns--;
+        out.result = 'lose'; out.text = '패배했다. ' + lostText(lost) + '을(를) 빼앗기고 대포 하나를 잃었다.';
+        log(s, out.text, 'bad');
+      }
+    } else if (choice === 'run') {
+      if (rand(s) < o.run) { out.result = 'escaped'; out.text = '바람을 타고 따돌렸다.'; }
+      else { const lost = loseCargo(s, 0.25, 0.5); out.result = 'caught'; out.text = '따라잡혔다. ' + lostText(lost) + '을(를) 빼앗겼다.'; log(s, out.text, 'bad'); }
+    } else {
+      const toll = Math.min(s.cash, Math.round(o.toll)); s.cash -= toll;
+      out.result = 'paid'; out.text = '통행세 ' + Math.round(toll).toLocaleString() + '냥을 내고 지나갔다.';
+      log(s, out.text);
+    }
+    s.pending = null;
+    out.arrival = finishVoyage(s, pd.dest, pd.months);
+    return Object.assign({ ok: true }, out);
+  }
+
+  function wageOf(s, id) { return Math.round(EMP[id].wage * (1 + 0.5 * yearIdx(s.month))); }
+  function owedTotal(s) { return Object.values(s.owed || {}).reduce((a, b) => a + b, 0); }
+  // 밀린 월급은 출항할 때 현금, 모자라면 예금에서 지급. 그래도 모자라면 많이 밀린 직원부터 떠난다
+  function payWages(s) {
+    s.owed = s.owed || {};
+    let total = owedTotal(s);
+    if (total <= 0) return [];
+    const left = [];
+    while (total > s.cash + s.bank && s.employees.length) {
+      let worst = 0; s.employees.forEach((id, i) => { if ((s.owed[id] || 0) > (s.owed[s.employees[worst]] || 0)) worst = i; });
+      const id = s.employees[worst];
+      log(s, '밀린 월급 ' + Math.round(s.owed[id] || 0) + '냥을 못 받은 ' + EMP[id].name + '이(가) 떠났다.', 'bad');
+      left.push(id); delete s.owed[id]; s.employees.splice(worst, 1);
+      total = owedTotal(s);
+    }
+    const fromCash = Math.min(s.cash, total); s.cash -= fromCash; s.bank -= (total - fromCash); clampMoney(s);
+    s.owed = {};
+    dumpOverflow(s);
+    return left;
+  }
+  function dumpOverflow(s) {
+    let over = cargoUsed(s) - capacity(s);
+    if (over > 0) {
+      for (let g = 4; g >= 0 && over > 0; g--) { const d = Math.min(over, s.hold[g]); s.hold[g] -= d; over -= d; if (!s.hold[g]) s.basis[g] = 0; }
+      log(s, '화물칸이 줄어 넘치는 짐을 바다에 버렸다.', 'bad');
+    }
+  }
+
+  function clampMoney(s) { if (s.cash < 0 && s.cash > -1) s.cash = 0; if (s.bank < 0 && s.bank > -1) s.bank = 0; }
+  function monthTick(s) {
+    s.owed = s.owed || {};
+    s.employees.forEach((id) => { s.owed[id] = (s.owed[id] || 0) + wageOf(s, id); });
+    s.bank *= 1.01;
+    if (has(s, 'rumor')) {
+      let old = -1;
+      for (let p = 0; p < PORTS.length; p++) if (p !== s.port && (old < 0 || s.known[p].month < s.known[old].month)) old = p;
+      if (old >= 0) s.known[old] = { prices: s.prices[old].map(Math.round), month: s.month + 1 };
+    }
+    if ((s.month + 1) % 12 === 6) log(s, '태풍 철이 시작됐다. 7~9월은 폭풍이 두 배로 잦다. 비싼 화물일수록 위험하다.', 'warn');
+    stepMarket(s);
+    s.month++;
+  }
+
+  function finishVoyage(s, dest, months) {
+    for (let i = 0; i < months; i++) monthTick(s);
+    s.port = dest; s.lastVoyageMonths = months;
+    return arrive(s, true);
+  }
+
+  function arrive(s, newPort) {
+    const p = s.port;
+    const prev = s.known[p] ? { prices: s.known[p].prices.slice(), month: s.known[p].month } : null;
+    refreshKnown(s);
+    const events = [];
+    const boss = bossActive(s);
+    const shielded = s.flags.letter; s.flags.letter = false;
+    // 유황 압수
+    if (s.hold[4] > 0 && PORTS[p].seize > 0 && !has(s, 'wokou')) {
+      const pr = PORTS[p].seize * (boss && boss.id === 'customs' ? 3 : 1) * (yearIdx(s.month) === 0 ? 0.5 : 1) + (has(s, 'smuggler') ? 0.05 : 0);
+      if (rand(s) < pr) {
+        if (shielded) events.push({ type: 'shield', text: '세관이 유황을 뒤지려 했지만 청탁서를 보이자 물러났다.' });
+        else {
+          const lost = s.hold[4]; s.hold[4] = 0; s.basis[4] = 0;
+          const fine = Math.round(s.cash * 0.2 * (has(s, 'customsman') ? 2 : 1)); s.cash -= fine;
+          const text = '세관에 유황 ' + lost + '섬을 압수당하고 벌금 ' + fine.toLocaleString() + '냥을 냈다.';
+          events.push({ type: 'seize', text }); log(s, text, 'bad');
+        }
+      }
+    }
+    if (boss && boss.id === 'customs' && (p === 3 || p === 4)) {
+      const tax = Math.round(s.cash * 0.05); s.cash -= tax;
+      const text = '해금 단속관이 입항세 ' + tax.toLocaleString() + '냥을 걷어 갔다.';
+      events.push({ type: 'tax', text }); log(s, text, 'bad');
+    }
+    if (s.cash > 2500 && !PORTS[p].home && rand(s) < 0.06) {
+      if (shielded) events.push({ type: 'shield', text: '부둣가 패거리가 다가왔지만 청탁서 덕에 손대지 못했다.' });
+      else {
+        const robbed = Math.round(s.cash * (0.3 + 0.2 * rand(s))); s.cash -= robbed;
+        const text = '부둣가에서 강도를 만나 현금 ' + robbed.toLocaleString() + '냥을 털렸다. 큰돈은 나하 은행에 맡기자.';
+        events.push({ type: 'rob', text }); log(s, text, 'bad');
+      }
+    }
+    // 소문 적중 확인
+    const confirmed = [];
+    for (let g = 0; g < 5; g++) {
+      const ratio = s.prices[p][g] / normalPrice(p, g);
+      const r = s.rumors.find(x => x.p === p && x.g === g && x.month >= s.month - 4);
+      if (r && ((r.up && ratio >= 1.4) || (!r.up && ratio <= 0.7))) confirmed.push(g);
+    }
+    s.soldVisit = {}; s.portSales = 0;
+    if (newPort) { s.firstSale = true; s.boughtVisit = [0, 0, 0, 0, 0]; s.shop = genShop(s); }
+    s.lastReveal = { port: p, prev, now: s.prices[p].slice(), confirmed, newPort };
+    return { port: p, events, reveal: s.lastReveal };
+  }
+
+  function waitMonth(s) {
+    if (s.pending) return LOCK;
+    const settled = settle(s, s.month + 1);
+    const wageLeft = s.over || s.win ? [] : payWages(s);
+    if (s.over || s.win) return { ok: true, settled, ended: true };
+    monthTick(s);
+    const arrival = arrive(s, false);
+    return { ok: true, settled, arrival, wageLeft };
+  }
+
+  root.Engine = {
+    PORTS, GOODS, FACTOR, SCHEDULE, BOSSES, EMPLOYEES, EMP, CONSUMABLES, CONS, MAX_EMP, MAX_CONS,
+    newGame, dateLabel, yearIdx, normalPrice, capacity, cargoUsed, freeSpace, travelMonths, dist,
+    bossOfYear, bossActive, closedPorts, nextDue, dueAmount, cargoValue, netWorth,
+    maxBuy, buy, sell, sellQuote, buyCost, depthOf,
+    DIFFS, dueAmt, totalDebt, RANKS, finalRank, TIERS, wageOf, genShop, pickStarter, previewHire, fuseOdds, fuse, pickReward, consCost, reroll, rerollCost, hire, fire, moveEmp, buyCons, useCons,
+    buyGun, gunCost, upgradeShip, shipCost, bankMove,
+    canTravel, startVoyage, owedTotal, pirateRisk, stormRisk, pirateOdds, resolvePirate, waitMonth, has,
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+(function () {
+  'use strict';
+  const E = window.Engine;
+  const KEY = 'eunui-bada.v1';
+  const $ = (q) => document.querySelector(q);
+  const fmt = (n) => Math.round(n).toLocaleString('ko-KR');
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let S = null, busy = false, selDest = null, tab = 'market', revealPending = false, fireConfirm = -1;
+
+  // ── 저장 ──
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+  function loadSaved() {
+    try { const t = localStorage.getItem(KEY); if (!t) return null; const s = JSON.parse(t); if (s && s.v === 1 && !s.over && !s.win) return s; } catch (e) {}
+    return null;
+  }
+
+  // ── 소리 ──
+  let AC = null, soundOn = false;
+  function initAudio() {
+    if (AC) return;
+    try { AC = new (window.AudioContext || window.webkitAudioContext)(); soundOn = true; $('#btn-sound').textContent = '소리 끄기'; } catch (e) { AC = null; }
+  }
+  function tone(freq, dur, type, vol, slideTo) {
+    if (!AC || !soundOn) return;
+    const t = AC.currentTime, o = AC.createOscillator(), g = AC.createGain();
+    o.type = type || 'triangle'; o.frequency.setValueAtTime(freq, t);
+    if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t + dur);
+    g.gain.setValueAtTime(vol || 0.12, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g).connect(AC.destination); o.start(t); o.stop(t + dur + 0.02);
+  }
+  function thud(big) {
+    if (!AC || !soundOn) return;
+    tone(big ? 120 : 160, 0.22, 'sine', big ? 0.5 : 0.35, 40);
+    const t = AC.currentTime, len = 0.12, buf = AC.createBuffer(1, AC.sampleRate * len, AC.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length);
+    const src = AC.createBufferSource(), g = AC.createGain(), f = AC.createBiquadFilter();
+    f.type = 'lowpass'; f.frequency.value = 900; g.gain.value = big ? 0.35 : 0.22;
+    src.buffer = buf; src.connect(f).connect(g).connect(AC.destination); src.start(t);
+  }
+  function coinSound(n) { for (let i = 0; i < n; i++) setTimeout(() => tone(1800 + Math.random() * 900, 0.08, 'square', 0.03), i * 45); }
+  function chime() { [660, 880, 1320].forEach((f, i) => setTimeout(() => tone(f, 0.35, 'sine', 0.1), i * 90)); }
+  document.addEventListener('pointerdown', initAudio, { once: true });
+  $('#btn-sound').addEventListener('click', () => {
+    initAudio(); if (!AC) return;
+    soundOn = !soundOn; $('#btn-sound').textContent = soundOn ? '소리 끄기' : '소리 켜기';
+  });
+
+  // ── 지도 ──
+  const P = (lon, lat) => [(lon - 110) * 36 + 16, (40 - lat) * 22 + 20];
+  const COAST = {
+    mainland: [[105,41.5],[129.9,41.5],[129.7,41.0],[129.0,40.6],[128.4,40.0],[127.6,39.6],[127.5,39.2],[128.4,38.6],[128.6,38.3],[129.1,37.6],[129.4,37.0],[129.5,36.4],[129.4,35.5],[129.1,35.15],[128.6,34.9],[128.0,34.85],[127.4,34.6],[126.7,34.35],[126.3,34.5],[126.5,35.1],[126.5,35.8],[126.7,36.3],[126.4,36.8],[126.8,37.2],[126.6,37.5],[126.1,37.7],[125.3,37.7],[124.8,38.0],[125.2,38.6],[125.4,38.9],[125.1,39.5],[124.4,39.85],[123.3,39.75],[122.2,39.4],[121.3,38.8],[121.7,39.3],[121.5,39.8],[122.2,40.5],[121.2,40.9],[120.4,40.3],[119.5,39.8],[118.6,39.2],[117.7,38.9],[117.6,38.4],[118.4,37.7],[118.8,37.4],[119.8,37.2],[120.7,37.8],[121.6,37.5],[122.5,37.3],[122.1,36.9],[121,36.5],[120.3,36.0],[119.5,35.3],[119.3,34.8],[120.3,34.3],[120.8,32.8],[121.4,32.3],[121.9,31.7],[121.9,31.0],[121.0,30.6],[121.9,30.1],[121.6,29.5],[121.9,29.1],[121.4,28.5],[120.9,27.9],[120.4,27.2],[119.7,26.5],[119.6,25.9],[119.0,25.3],[118.6,24.6],[117.8,24.2],[117.2,23.6],[116.5,23.1],[116.0,22.9],[115.1,22.7],[114.2,22.3],[113.6,22.4],[113.5,22.1],[112.6,21.8],[112.0,21.7],[111.0,21.4],[110.4,21.2],[110.2,20.4],[109.9,20.8],[109.6,21.6],[108.5,21.6],[107.8,21.5],[106.7,20.7],[106.0,19.9],[105.7,19.0],[106.5,17.5],[107.1,16.8],[108.2,16.1],[108.8,15.2],[109.2,13.8],[109.3,12.5],[109.2,11.0],[105,11.0]],
+    taiwan: [[121.5,25.3],[122.0,25.0],[121.8,24.3],[121.4,23.2],[120.9,22.0],[120.6,22.5],[120.2,23.0],[120.1,23.6],[120.5,24.4],[121.0,25.1]],
+    hainan: [[108.6,19.2],[109.5,20.0],[110.6,20.1],[111.0,19.6],[110.4,18.6],[109.5,18.2],[108.7,18.5]],
+    luzon: [[120.6,18.6],[121.4,18.6],[122.3,18.4],[122.2,17.2],[122.5,16.3],[121.6,15.8],[121.7,14.9],[121.6,14.2],[122.6,14.1],[123.3,13.8],[124.1,12.6],[123.8,12.9],[123.0,13.2],[122.2,13.6],[121.4,13.8],[120.9,13.9],[120.6,14.3],[120.95,14.65],[120.6,14.9],[120.0,15.0],[119.8,16.0],[120.3,16.2],[120.4,17.5]],
+    mindoro: [[120.3,13.5],[121.2,13.4],[121.5,12.6],[121.1,12.2],[120.6,12.7]],
+    kyushu: [[129.6,33.4],[130.0,33.6],[130.4,33.9],[131.0,33.95],[131.7,33.6],[131.9,33.0],[131.6,32.3],[131.4,31.4],[130.7,31.0],[130.6,31.6],[130.2,31.3],[130.2,32.1],[129.75,32.6],[129.85,33.0],[129.6,33.15]],
+    honshu: [[130.9,34.0],[131.5,34.4],[132.6,35.4],[133.5,35.6],[134.5,35.7],[134.5,34.0],[132.4,34.2],[131.2,33.95]],
+    shikoku: [[132.0,33.3],[132.6,33.9],[134.3,34.2],[134.7,33.8],[133.0,32.7]],
+    jeju: [[126.15,33.3],[126.5,33.55],[126.95,33.45],[126.9,33.25],[126.3,33.2]],
+    tsushima: [[129.2,34.7],[129.45,34.6],[129.3,34.15],[129.2,34.3]],
+    okinawa: [[127.65,26.08],[127.75,26.3],[127.9,26.5],[128.3,26.85],[128.1,26.6],[127.8,26.25],[127.7,26.1]],
+  };
+  const ISLETS = [[129.4,28.3,6],[131.0,30.6,4],[130.5,30.35,4],[125.3,24.75,4],[124.2,24.4,4],[123.8,24.3,4],[119.6,23.6,3],[128.9,27.8,3],[130.0,29.3,3]];
+  const LABEL = { 0: [-12, -12, 'end'], 1: [-10, 24, 'end'], 2: [14, 5, 'start'], 3: [-14, 5, 'end'], 4: [0, 28, 'middle'], 5: [-14, 5, 'end'] };
+  const NS = 'http://www.w3.org/2000/svg';
+  let shipPos = null; // 애니메이션 중 좌표
+
+  function smooth(pts) {
+    // 점을 이어 살짝 둥근 해안선(이차 곡선)
+    const xy = pts.map((p) => P(p[0], p[1]));
+    let d = 'M' + xy[0][0].toFixed(1) + ',' + xy[0][1].toFixed(1);
+    for (let i = 1; i < xy.length; i++) {
+      const a = xy[i], b = xy[(i + 1) % xy.length];
+      const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
+      d += ' Q' + a[0].toFixed(1) + ',' + a[1].toFixed(1) + ' ' + mx.toFixed(1) + ',' + my.toFixed(1);
+    }
+    return d + 'Z';
+  }
+
+  function drawMapStatic() {
+    const cx = 240, cy = 560;
+    let rh = '';
+    for (let i = 0; i < 16; i++) {
+      const a = (i / 16) * Math.PI * 2;
+      rh += '<line class="rhumb" x1="' + cx + '" y1="' + cy + '" x2="' + (cx + Math.cos(a) * 1100).toFixed(0) + '" y2="' + (cy + Math.sin(a) * 1100).toFixed(0) + '"/>';
+    }
+    let land = '';
+    Object.keys(COAST).forEach((k) => { land += '<path class="land" d="' + smooth(COAST[k]) + '"/>'; });
+    ISLETS.forEach((t) => { const [x, y] = P(t[0], t[1]); land += '<circle class="land" cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + t[2] + '"/>'; });
+    const rose =
+      '<g transform="translate(' + cx + ',' + cy + ')">' +
+      '<circle r="34" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.2" opacity="0.85"/>' +
+      '<path d="M0,-44 L7,0 L0,44 L-7,0Z" fill="var(--ink)"/><path d="M-44,0 L0,7 L44,0 L0,-7Z" fill="var(--ink)" opacity="0.55"/>' +
+      '<path d="M0,-44 L7,0 L-7,0Z" fill="var(--seal)"/>' +
+      '<text y="-50" text-anchor="middle" font-family="Song Myung, serif" font-size="13" fill="var(--ink)">子</text></g>';
+    const cart =
+      '<g class="cart" transform="translate(600,588)">' +
+      '<rect x="-4" y="-26" width="190" height="44" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.2"/>' +
+      '<text x="91" y="-6" text-anchor="middle" font-family="Song Myung, serif" font-size="16">東南海 航路圖</text>' +
+      '<text x="91" y="11" text-anchor="middle" font-family="IBM Plex Sans KR, sans-serif" font-size="10" fill="var(--ink-soft)">동남해 항로도, 만력 8년(1580)</text></g>';
+    $('#map').innerHTML =
+      '<defs><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="7"/><feDisplacementMap in="SourceGraphic" scale="3.2"/></filter>' +
+      '<filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3" result="n"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 0.07"/></feComponentTransfer></filter></defs>' +
+      '<rect width="800" height="640" fill="var(--sea)"/>' + rh +
+      '<g filter="url(#rough)">' + land + '</g>' +
+      '<rect width="800" height="640" filter="url(#grain)" pointer-events="none"/>' +
+      rose + cart +
+      '<g id="routes"></g><g id="ports"></g><g id="ship"></g>';
+  }
+
+  function shipSvg(x, y) {
+    return '<g transform="translate(' + x.toFixed(1) + ',' + y.toFixed(1) + ')">' +
+      '<ellipse cx="0" cy="9" rx="17" ry="4" fill="var(--ink)" opacity="0.18"/>' +
+      '<path d="M-16,2 Q0,11 16,2 L12,-1 L-13,-1Z" fill="var(--ink)"/>' +
+      '<path d="M-6,-1 L-6,-22 Q2,-19 3,-1Z" fill="var(--seal)" stroke="var(--ink)" stroke-width="0.8"/>' +
+      '<path d="M5,-1 L5,-15 Q11,-12 11,-1Z" fill="var(--seal)" stroke="var(--ink)" stroke-width="0.8" opacity="0.9"/>' +
+      '<path d="M-6,-16 L1,-15 M-6,-10 L2,-9 M-6,-5 L3,-4" stroke="var(--ink)" stroke-width="0.7"/></g>';
+  }
+
+  function curve(a, b) {
+    const ax = E.PORTS[a].x, ay = E.PORTS[a].y, bx = E.PORTS[b].x, by = E.PORTS[b].y;
+    const mx = (ax + bx) / 2, my = (ay + by) / 2, dx = bx - ax, dy = by - ay, len = Math.hypot(dx, dy) || 1;
+    return { ax, ay, bx, by, cx: mx - (dy / len) * len * 0.18, cy: my + (dx / len) * len * 0.18 };
+  }
+  function onCurve(c, t) { const u = 1 - t; return [u * u * c.ax + 2 * u * t * c.cx + t * t * c.bx, u * u * c.ay + 2 * u * t * c.cy + t * t * c.by]; }
+
+  function renderMap() {
+    const closed = E.closedPorts(S);
+    let html = '';
+    E.PORTS.forEach((p) => {
+      const here = p.id === S.port, sel = p.id === selDest, isClosed = closed.indexOf(p.id) >= 0;
+      const [dx, dy, anc] = LABEL[p.id];
+      const m = here ? '' : E.travelMonths(S, S.port, p.id) + '개월';
+      html += '<g class="port' + (here ? ' here' : '') + (sel ? ' sel' : '') + (isClosed ? ' closed' : '') + '" data-port="' + p.id + '" tabindex="0" role="button" aria-label="' + p.name + (m ? ', ' + m : ', 현재 위치') + '">' +
+        '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="24" fill="transparent"/>' +
+        (p.home ? '<rect x="' + (p.x - 9).toFixed(1) + '" y="' + (p.y - 9).toFixed(1) + '" width="18" height="18" fill="none" stroke="var(--seal)" stroke-width="1.5" transform="rotate(45 ' + p.x.toFixed(1) + ' ' + p.y.toFixed(1) + ')"/>' : '') +
+        '<circle class="port-dot" cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="6"/>' +
+        '<text class="pname" x="' + (p.x + dx).toFixed(1) + '" y="' + (p.y + dy).toFixed(1) + '" text-anchor="' + anc + '">' + p.name + '</text>' +
+        '<text class="phan" x="' + (p.x + dx).toFixed(1) + '" y="' + (p.y + dy + 14).toFixed(1) + '" text-anchor="' + anc + '">' + p.hanja + (isClosed ? ' 봉쇄' : '') + '</text>' +
+        ((S.surges || []).some((x) => x.p === p.id) ? '<text class="pmon" x="' + (p.x + dx).toFixed(1) + '" y="' + (p.y + dy + 28).toFixed(1) + '" text-anchor="' + anc + '">해적 창궐</text>' : '') +
+        (m ? '<text class="pmon" x="' + (p.x + dx).toFixed(1) + '" y="' + (p.y + dy - 18).toFixed(1) + '" text-anchor="' + anc + '">' + m + '</text>' : '') +
+        '</g>';
+    });
+    $('#ports').innerHTML = html;
+    let r = '';
+    if (selDest !== null && selDest !== S.port) {
+      const c = curve(S.port, selDest);
+      r = '<path class="route" d="M' + c.ax + ',' + c.ay + ' Q' + c.cx + ',' + c.cy + ' ' + c.bx + ',' + c.by + '"/>';
+    }
+    $('#routes').innerHTML = r;
+    const pos = shipPos || [E.PORTS[S.port].x + 4, E.PORTS[S.port].y - 14];
+    $('#ship').innerHTML = shipSvg(pos[0], pos[1]);
+  }
+
+  $('#map').addEventListener('click', (e) => {
+    const g = e.target.closest('.port'); if (!g || busy) return;
+    pickPort(+g.dataset.port);
+  });
+  $('#map').addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const g = e.target.closest('.port'); if (!g || busy) return;
+    e.preventDefault(); pickPort(+g.dataset.port);
+  });
+  function pickPort(id) {
+    if (id === S.port) { selDest = null; } else selDest = id;
+    renderMap(); renderVoyage();
+  }
+
+  function animateShip(from, to, months, t0, t1) {
+    t0 = t0 || 0; t1 = t1 === undefined ? 1 : t1;
+    return new Promise((resolve) => {
+      if (reduce) { shipPos = null; resolve(); return; }
+      const c = curve(from, to), dur = Math.max(500, months * 700 * (t1 - t0)), st = performance.now();
+      let done = false;
+      const res = () => { if (!done) { done = true; resolve(); } };
+      setTimeout(res, dur + 400); // 탭이 가려져 프레임이 멈춰도 진행
+      function f(now) {
+        if (done) return;
+        const k = Math.min(1, (now - st) / dur), t = t0 + (t1 - t0) * (k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2);
+        const [x, y] = onCurve(c, t);
+        shipPos = [x + 4, y - 14 + Math.sin(now / 120) * 1.2];
+        $('#ship').innerHTML = shipSvg(shipPos[0], shipPos[1]);
+        if (k < 1) requestAnimationFrame(f); else res();
+      }
+      requestAnimationFrame(f);
+    });
+  }
+
+  // ── 상단 ──
+  function renderHeader() {
+    $('#st-date').textContent = E.dateLabel(S.month);
+    $('#st-cash').textContent = fmt(S.cash) + (E.owedTotal(S) > 0 ? ' (월급 −' + fmt(E.owedTotal(S)) + ')' : '');
+    $('#st-bank').textContent = fmt(S.bank);
+    $('#st-cargo').textContent = E.cargoUsed(S) + '/' + E.capacity(S);
+    $('#st-guns').textContent = S.guns;
+    const d = E.nextDue(S);
+    if (d) {
+      const a = E.dueAmount(S, d), have = S.cash + S.bank, left = d.due - S.month;
+      $('#due-lbl').textContent = '상환 ' + E.dateLabel(d.due) + ' 말' + (left <= 0 ? ', 이번 달' : ', ' + (left + 1) + '개월 남음');
+      $('#due-amt').textContent = fmt(a.total) + '냥' + (a.tax ? ' (세금 포함)' : '') + (S.carry ? ' (연체분 포함)' : '');
+      const g = $('#due-gauge'); g.querySelector('i').style.width = Math.min(100, (have / a.total) * 100) + '%';
+      g.classList.toggle('short', have < a.total);
+    } else { $('#due-lbl').textContent = '빚을 모두 갚았다'; $('#due-amt').textContent = ''; }
+  }
+
+  function renderBoss() {
+    const y = Math.min(E.yearIdx(S.month), 2), b = E.bossOfYear(S, y), on = !!E.bossActive(S);
+    const el = $('#boss');
+    el.className = 'boss' + (on ? ' on' : '');
+    let extra = '';
+    if (b.id === 'plague') extra = ' (' + S.plague[y].map((p) => E.PORTS[p].name).join(', ') + ')';
+    el.innerHTML = '<span class="tag">' + (1580 + y) + '년 결산 보스: ' + b.name + '</span><span>' + b.rule + extra + '</span>' +
+      '<span class="when">' + (on ? '지금 발동 중, 12월 말 상환까지' : '9월부터 12월까지 발동') + '</span>' +
+      ((S.surges || []).length ? '<span class="surge">해적 창궐: ' + S.surges.map((x) => E.PORTS[x.p].name + ' 근해(' + x.left + '달)').join(', ') + '. 오가는 뱃길 해적 3배</span>' : '');
+  }
+
+  // ── 항해 패널 ──
+  function renderVoyage() {
+    const el = $('#voyage');
+    if (S.over || S.win) { el.innerHTML = '<p>이번 판은 끝났습니다.</p><button class="btn" type="button" data-act="new">새 판 시작</button>'; return; }
+    const d = E.nextDue(S);
+    function dueNote(months) {
+      const owed = E.owedTotal(S);
+      const wage = owed > 0 ? '<span class="note">출항할 때 밀린 월급 ' + fmt(owed) + '냥을 줍니다.</span> ' : '';
+      if (!d || d.due >= S.month + months) return wage;
+      const a = E.dueAmount(S, d), have = S.cash + S.bank - owed;
+      const base = E.dateLabel(d.due) + ' 상환일이 지나갑니다. 현금과 예금에서 ' + fmt(a.total) + '냥을 걷어 갑니다(월급 주고 남는 돈 ' + fmt(have) + '냥).';
+      return wage + (have >= a.total ? '<span class="note">' + base + '</span>' : '<span class="warn">' + base + ' 모자라면 실린 화물을 시세 절반에 급매합니다. 먼저 제값에 파세요.</span>');
+    }
+    if (selDest === null) {
+      el.innerHTML = '<p>지도에서 다음 항구를 고르세요. 숫자는 걸리는 개월 수입니다.<br>' + dueNote(1) + '</p>' +
+        '<button class="btn ghost" type="button" data-act="wait">한 달 머물기</button>';
+      return;
+    }
+    const t = E.canTravel(S, selDest);
+    const months = E.travelMonths(S, S.port, selDest);
+    const risk = E.pirateRisk(S, S.port, selDest, months);
+    const riskTxt = S.flags.pass ? '통행증 있음, 해적 없음' : E.has(S, 'wokou') ? '해적은 왜구 연줄이 통행세로 처리' : '해적 위험 약 ' + Math.round(risk * 100) + '%';
+    el.innerHTML = '<p><b>' + E.PORTS[S.port].name + ' → ' + E.PORTS[selDest].name + '</b>, ' + months + '개월 항해. <span class="note">' + riskTxt + (E.has(S, 'navigator') ? ', 폭풍 피해 없음' : ', 폭풍 위험 약 ' + Math.round(E.stormRisk(S, months) * 100) + '%' + ([6, 7, 8].indexOf(S.month % 12) >= 0 ? '(태풍 철)' : '')) + '</span><br>' +
+      (t.ok ? dueNote(months) : '<span class="warn">' + t.reason + '</span>') + '</p>' +
+      '<button class="btn ghost" type="button" data-act="cancel">취소</button>' +
+      '<button class="btn seal" type="button" data-act="sail"' + (t.ok ? '' : ' disabled') + '>출항</button>';
+  }
+  $('#voyage').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b || busy) return;
+    const a = b.dataset.act;
+    if (a === 'cancel') { selDest = null; renderMap(); renderVoyage(); }
+    if (a === 'sail') depart(selDest);
+    if (a === 'wait') waitHere();
+    if (a === 'new') newRun();
+  });
+
+  // ── 탭 ──
+  document.querySelector('.tabs').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    tab = b.dataset.tab; renderTabs();
+  });
+  function renderTabs() {
+    document.querySelectorAll('.tabs button').forEach((b) => b.classList.toggle('on', b.dataset.tab === tab));
+    const body = $('#tabbody');
+    if (tab === 'market') body.innerHTML = marketHtml();
+    else if (tab === 'ledger') body.innerHTML = ledgerHtml();
+    else if (tab === 'sched') body.innerHTML = schedHtml();
+    else body.innerHTML = portHtml();
+  }
+
+  function bestElsewhere(g) {
+    let best = null;
+    E.PORTS.forEach((p) => {
+      if (p.id === S.port) return;
+      const k = S.known[p.id]; if (!k) return;
+      if (!best || k.prices[g] > best.v) best = { v: k.prices[g], p: p.id, age: S.month - k.month };
+    });
+    return best;
+  }
+  function ageText(age) { return age <= 0 ? '지금' : age >= 6 ? '옛 장부' : age + '달 전'; }
+
+  function marketHtml() {
+    const p = S.port, rv = revealPending && S.lastReveal && S.lastReveal.port === p ? S.lastReveal : null;
+    const rivalOn = !!(E.bossActive(S) && E.bossActive(S).id === 'rival');
+    const order = [0, 1, 2, 3, 4].sort((a, b) => (S.hold[a] > 0) - (S.hold[b] > 0)); // 내 화물은 마지막에 뒤집힘
+    const delay = {}; order.forEach((g, i) => { delay[g] = i * 0.16; });
+    let rows = '';
+    let banners = [];
+    E.GOODS.forEach((G, g) => {
+      const price = S.prices[p][g], ratio = price / E.normalPrice(p, g);
+      const hot = ratio >= 1.5, cheap = ratio <= 0.65;
+      const best = bestElsewhere(g);
+      const mb = E.maxBuy(S, g);
+      const q = S.hold[g];
+      const quote = q ? E.sellQuote(S, g, q) : 0;
+      const pl = q ? quote - S.basis[g] * q : 0;
+      if (rv && rv.confirmed.indexOf(g) >= 0) banners.push('소문이 맞았다! ' + E.PORTS[p].name + '의 ' + G.name + ' 값');
+      if (rv && hot && q > 0) banners.push('실어 온 ' + G.name + ' 값이 평소의 ' + ratio.toFixed(1) + '배');
+      rows += '<tr class="' + (hot ? 'hotrow' : cheap ? 'cheaprow' : '') + (rv ? ' flip' : '') + '" style="' + (rv ? 'animation-delay:' + delay[g] + 's' : '') + '">' +
+        '<td><span class="gname">' + G.name + '</span>' + (G.contraband ? '<span class="chip contra">밀수품</span>' : '') +
+        (hot ? '<span class="chip hot">평소 ' + ratio.toFixed(1) + '배</span>' : cheap ? '<span class="chip cheap">헐값</span>' : '') +
+        '<span class="sub">평소 ' + fmt(E.normalPrice(p, g)) + '냥</span></td>' +
+        '<td class="r num"><b>' + fmt(price) + '</b>' +
+        (q ? '<span class="sub ' + (pl >= 0 ? 'gain' : 'loss') + '">팔면 평균 ' + fmt(quote / q) + '</span>' : (rivalOn ? '<span class="sub loss">팔면 −20%</span>' : '')) + '</td>' +
+        '<td class="r num">' + (q ? q + '<span class="sub">평단 ' + fmt(S.basis[g]) + '</span>' +
+          '<button class="mini sell' + (pl < 0 ? ' losing' : '') + '" type="button" data-sell="' + g + '" data-q="all" title="받을 돈 약 ' + fmt(quote) + '냥, 손익 ' + fmt(pl) + '냥(직원 효과와 성과급 전)">' + (pl < 0 ? '모두 팔기(손해)' : '모두 팔기') + '</button>' : '<span class="sub">없음</span>') + '</td>' +
+        '<td class="r num">' + (best ? fmt(best.v) + '<span class="sub">' + E.PORTS[best.p].name + ', ' + ageText(best.age) + '</span>' : '') + '</td>' +
+        '<td><div class="acts">' +
+        '<button class="mini" type="button" data-buy="' + g + '" data-q="10"' + (mb >= 1 ? '' : ' disabled') + '>10 사기</button>' +
+        '<button class="mini" type="button" data-buy="' + g + '" data-q="max"' + (mb >= 1 ? '' : ' disabled') + '>최대' + (mb ? ' ' + mb : '') + '</button>' +
+
+        '</div>' + (q ? '<span class="sub ' + (pl >= 0 ? 'gain' : 'loss') + '" style="text-align:right">받을 돈 약 ' + fmt(quote) + '냥, 손익 ' + (pl >= 0 ? '+' : '') + fmt(pl) + '</span>' : '') +
+        (mb >= 20 ? '<span class="sub" style="text-align:right">최대로 사면 평단 약 ' + fmt(E.buyCost(price, E.depthOf(S, g), mb) / mb) + '냥(+' + Math.round((E.buyCost(price, E.depthOf(S, g), mb) / mb / price - 1) * 100) + '%)</span>' : '') + '</td></tr>';
+    });
+    const here = E.PORTS[p];
+        return '<div class="porthead"><h2>' + here.name + '</h2><span>' + here.hanja + (here.home ? ', 본거지(은행과 조선소)' : '') + (here.seize ? ', 유황 단속 있음' : '') + '</span>' +
+      '<button class="btn seal shopbtn" type="button" data-shop>상점: 직원 ' + S.shop.emps.length + '명, 소모품 ' + S.shop.cons.length + '개</button></div>' +
+      (rivalOn ? '<p class="banner" style="background:color-mix(in srgb, var(--bad) 15%, transparent)">경쟁 대상단 발동 중: 어느 항구에서 팔든 판매가가 20% 깎입니다. "팔면 평균"은 이미 반영된 값입니다.</p>' : '') +
+      '<div class="tbl-wrap"><table><thead><tr><th>상품</th><th class="r">여기 시세</th><th class="r">보유</th><th class="r">장부상 최고가</th><th class="r">매매</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+      (banners.length ? '<div class="banner">' + banners.join('. ') + '</div>' : '') +
+      '<div class="legend"><span>많이 사면 값이 오르고, 많이 팔면 값이 내려갑니다. 큰 배는 한 상품만 몰아 싣기보다 여러 상품으로 나누는 게 유리합니다.</span><span>장부상 최고가는 마지막으로 본 시세라 지금은 다를 수 있습니다.</span></div>';
+  }
+
+  function ledgerHtml() {
+    let head = '<tr><th>항구</th>' + E.GOODS.map((g) => '<th class="r">' + g.name + '</th>').join('') + '</tr>';
+    const cols = E.GOODS.map((g, gi) => E.PORTS.map((p) => S.known[p.id].prices[gi]));
+    let body = '';
+    E.PORTS.forEach((p) => {
+      const k = S.known[p.id], age = S.month - k.month, op = age <= 0 ? 1 : Math.max(0.45, 1 - age * 0.1);
+      body += '<tr><td><b>' + p.name + '</b><span class="sub age">' + (p.id === S.port ? '여기, 지금' : ageText(age)) + '</span></td>' +
+        E.GOODS.map((g, gi) => {
+          const v = k.prices[gi], mx = Math.max.apply(null, cols[gi]), mn = Math.min.apply(null, cols[gi]);
+          return '<td class="cell' + (v === mx ? ' best' : v === mn ? ' low' : '') + '" style="opacity:' + op + '">' + fmt(v) + '</td>';
+        }).join('') + '</tr>';
+    });
+    const rum = S.rumors.filter((r) => r.month >= S.month - 4).map((r) => '<li>' + E.dateLabel(r.month) + ': ' + E.PORTS[r.p].name + ' ' + E.GOODS[r.g].name + ' ' + (r.up ? '폭등' : '폭락') + '</li>').join('');
+    return '<div class="tbl-wrap"><table class="ledger"><thead>' + head + '</thead><tbody>' + body + '</tbody></table></div>' +
+      '<div class="legend"><span style="color:var(--good)">초록: 장부상 가장 비싼 곳(팔 곳)</span><span style="color:var(--cheap)">청록: 가장 싼 곳(살 곳)</span><span>흐릴수록 오래된 정보</span></div>' +
+      '<h3 style="font-family:var(--f-display);font-weight:400;margin:12px 0 0">최근 소문</h3>' +
+      (rum ? '<ul class="rumors">' + rum + '</ul>' : '<p class="age">들은 소문이 없습니다. 소문꾼을 고용하거나 소문 소모품을 쓰세요.</p>');
+  }
+
+  function schedHtml() {
+    let rows = '';
+    E.SCHEDULE.forEach((d, i) => {
+      const paid = i < S.paid, next = i === S.paid;
+      const boss = d.boss !== undefined ? E.BOSSES[S.bosses[d.boss]].name : '';
+      rows += '<tr class="' + (next ? 'nextdue' : '') + '"><td class="' + (paid ? 'paid' : '') + '">' + E.dateLabel(d.due) + ' 말</td><td class="r num ' + (paid ? 'paid' : '') + '">' + fmt(E.dueAmt(S, d)) + '</td><td>' + (boss ? '결산 보스: ' + boss : '분기 상환') + (paid ? ' (완료)' : next ? ' (다음)' : '') + '</td></tr>';
+    });
+    return '<p style="margin:0 0 8px">상환일이 지나가는 순간 현금과 예금에서 자동으로 걷어 갑니다. 모자라면 연체 기회를 씁니다(이번엔 안 걷고, 이번 상환액의 1.2배를 다음 상환에 얹음). 연체 기회가 없으면 실린 화물을 시세 절반에 급매하고, 그래도 모자라면 파산입니다. 남은 연체 기회: <b>' + S.graces + '번</b>. 난이도: ' + (E.DIFFS[S.diff] || E.DIFFS.normal).name + '.</p>' +
+      '<div class="tbl-wrap"><table class="sched"><thead><tr><th>기한</th><th class="r">금액(냥)</th><th>비고</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+      '<div class="legend">' + [0, 1, 2].map((y) => '<span>' + (1580 + y) + '년 보스: ' + E.BOSSES[S.bosses[y]].name + ', ' + E.BOSSES[S.bosses[y]].rule + '</span>').join('') + '</div>';
+  }
+
+  function portHtml() {
+    const home = E.PORTS[S.port].home, yard = E.PORTS[S.port].yard;
+    let h = '<div class="facility">';
+    if (home) {
+      h += '<div class="row"><p><b>은행</b> 예금 ' + fmt(S.bank) + '냥, 월 1% 이자. 예금은 강도와 벌금에 안전합니다.</p><div class="acts">' +
+        '<button class="mini" type="button" data-bank="500">500 맡기기</button><button class="mini" type="button" data-bank="all">모두 맡기기</button>' +
+        '<button class="mini" type="button" data-bank="-500">500 찾기</button><button class="mini" type="button" data-bank="-all">모두 찾기</button></div></div>';
+    } else {
+      h += '<div class="row"><p>은행은 본거지 나하에만 있습니다. 현금을 2,500냥 넘게 들고 다니면 강도를 만날 수 있습니다.</p></div>';
+    }
+    if (yard) h += '<div class="row"><p><b>조선소</b> 화물칸 +50. 지금 ' + E.capacity(S) + '칸.</p><button class="mini" type="button" data-up="ship"' + (S.cash >= E.shipCost(S) ? '' : ' disabled') + '>개조 ' + fmt(E.shipCost(S)) + '냥</button></div>';
+    else h += '<div class="row"><p>조선소(화물칸 +50)는 나하, 나가사키, 마카오에 있습니다.</p></div>';
+    h += '<div class="row"><p><b>대포</b> ' + S.guns + '문. 1문당 화물칸 2칸. 해적과 싸울 때 쓰고, 1문마다 해적을 만날 확률이 4%씩 줄어듭니다(최대 60%).</p><button class="mini" type="button" data-up="gun"' + (S.cash >= E.gunCost(S) && E.freeSpace(S) >= 2 ? '' : ' disabled') + '>대포 ' + fmt(E.gunCost(S)) + '냥</button></div>';
+    const led = S.ledger.map((l, g) => (l ? E.GOODS[g].name + ' Lv' + l : '')).filter(Boolean).join(', ');
+    h += '<div class="row"><p><b>상품 장부</b> ' + (led || '아직 없음. 상점의 장부 소모품으로 특정 상품 이익을 키웁니다.') + '</p></div>';
+    return h + '</div>';
+  }
+
+  $('#tabbody').addEventListener('click', async (e) => {
+    const b = e.target.closest('button'); if (!b || busy) return;
+    if (b.dataset.shop !== undefined) { openShop(); return; }
+    if (b.dataset.buy !== undefined) {
+      const g = +b.dataset.buy, q = b.dataset.q === 'max' ? E.maxBuy(S, g) : 10;
+      const r = E.buy(S, g, q);
+      if (r.ok) TELE.ev('buy', { g, q: r.q, cost: Math.round(r.cost), m: S.month, port: S.port, max: b.dataset.q === 'max' });
+      if (!r.ok) toast(r.reason); else { tone(520, 0.06, 'square', 0.05); coinSound(2); }
+      revealPending = false; renderAll(); save();
+    } else if (b.dataset.sell !== undefined) {
+      const g = +b.dataset.sell, qh = S.hold[g], quoted = qh ? Math.round(E.sellQuote(S, g, qh) - S.basis[g] * qh) : 0;
+      const r = E.sell(S, g, S.hold[g]);
+      if (r.ok) { const cm = r.steps.find((x) => x.kind === 'comm'); TELE.ev('sell', { g, q: r.q, profit: Math.round(r.profit), rev: Math.round(r.rev), steps: r.steps.filter((x) => x.emp).length, comm: cm ? Math.round(-cm.amount) : 0, quoted, loss: r.profit < 0, m: S.month, port: S.port, emps: S.employees.slice() }); }
+      if (!r.ok) { toast(r.reason); return; }
+      revealPending = false;
+      busy = true; await playCascade(r); busy = false;
+      renderAll(); save();
+    } else if (b.dataset.bank) {
+      const v = b.dataset.bank, amt = v === 'all' ? S.cash : v === '-all' ? -S.bank : +v;
+      const r = E.bankMove(S, amt); if (!r.ok) toast(r.reason); else TELE.ev('bank', { amt: Math.round(amt), m: S.month }); renderAll(); save();
+    } else if (b.dataset.up) {
+      const r = b.dataset.up === 'ship' ? E.upgradeShip(S) : E.buyGun(S);
+      if (r.ok) TELE.ev(b.dataset.up === 'ship' ? 'upgrade' : 'gun', { m: S.month, lv: S.shipLv, guns: S.guns });
+      if (!r.ok) toast(r.reason); else thud(false);
+      renderAll(); save();
+    }
+  });
+
+  function renderLog() {
+    $('#log').innerHTML = S.log.slice(0, 14).map((l) => '<li class="' + l.tone + '"><b>' + E.dateLabel(l.m) + '</b>' + l.text + '</li>').join('');
+  }
+
+  // ── 직원 카드 (조커) ──
+  const META = {
+    haggler: { cat: 'trade', type: 'add', short: '+2 / 단위' },
+    opener: { cat: 'trade', type: 'pos', short: '첫 판매 +150' },
+    silk: { cat: 'trade', type: 'mult', short: '비단 ×1.6' },
+    porcelain: { cat: 'trade', type: 'mult', short: '도자기 ×1.8' },
+    pepper: { cat: 'trade', type: 'add', short: '후추 +5 / 단위' },
+    tongsa: { cat: 'info', type: 'passive', short: '이웃 항구 시세' },
+    rumor: { cat: 'info', type: 'passive', short: '매달 장부 갱신' },
+    owner: { cat: 'sea', type: 'passive', short: '화물칸 +40' },
+    gaekju: { cat: 'info', type: 'passive', short: '시장 충격 ½' },
+    assayer: { cat: 'trade', type: 'mult', short: '' },
+    clerk: { cat: 'trade', type: 'mult', short: '' },
+    bulk: { cat: 'trade', type: 'mult', short: '40단위↑ ×2' },
+    wokou: { cat: 'shadow', type: 'passive', short: '해적 통행세' },
+    customsman: { cat: 'shadow', type: 'mult', short: '유황 ×2.5' },
+    gunner: { cat: 'sea', type: 'passive', short: '전투력 ×2' },
+    navigator: { cat: 'sea', type: 'passive', short: '항해 −1달' },
+    cat: { cat: 'luck', type: 'chance', short: '¼ 확률 ×3' },
+    chief: { cat: 'luck', type: 'pos', short: '맨 끝 ×2.5' },
+    salt: { cat: 'trade', type: 'add', short: '상품별 첫 판매 +40' },
+    silversmith: { cat: 'trade', type: 'add', short: '은 +3 / 단위' },
+    smuggler: { cat: 'shadow', type: 'add', short: '유황 +5 / 단위' },
+    porter: { cat: 'sea', type: 'passive', short: '화물칸 +15' },
+    chanty: { cat: 'sea', type: 'passive', short: '폭풍 피해 ½' },
+    gambler: { cat: 'luck', type: 'chance', short: '+250 / −120' },
+    auntie: { cat: 'trade', type: 'add', short: '2번째 상품 +120' },
+    oldsalt: { cat: 'sea', type: 'mult', short: '2개월 항로 ×1.4' },
+    miser: { cat: 'trade', type: 'add', short: '' },
+    apprentice: { cat: 'trade', type: 'add', short: '' },
+    tycoon: { cat: 'myth', type: 'retrig', short: '최대 배수 한 번 더' },
+    copier: { cat: 'myth', type: 'copy', short: '오른쪽 따라 하기' },
+    seaking: { cat: 'myth', type: 'mult', short: '' },
+    mint: { cat: 'myth', type: 'mult', short: '' },
+    seal: { cat: 'myth', type: 'passive', short: '곱셈 1.5배 강화' },
+  };
+  const TYPE = {
+    add: ['+', '덧셈', '정산 때 이익에 더합니다. 곱셈 직원보다 앞자리에 두면 함께 불어납니다.'],
+    mult: ['×', '곱셈', '정산 때 지금까지 쌓인 이익을 곱합니다. 뒷자리일수록 많이 불어납니다.'],
+    passive: ['◆', '상시 효과', '정산과 상관없이 늘 작동합니다. 자리는 상관없습니다.'],
+    chance: ['?', '확률', '판매할 때마다 확률로 발동합니다.'],
+    pos: ['⇥', '자리 조건', '정해진 자리에 있을 때만 발동합니다.'],
+    retrig: ['↻', '재발동', '정산 연쇄 마지막에, 앞에서 나온 효과를 한 번 더 발동시킵니다.'],
+    copy: ['⇉', '복사', '바로 오른쪽 직원의 효과를 따라 합니다. 오른쪽에 센 직원을 두세요.'],
+  };
+  const CATNAME = { trade: '거래', info: '정보', sea: '항해', shadow: '뒷거래', luck: '행운', myth: '극상' };
+  const CONMETA = {
+    bulletin: { cat: 'info', short: '전체 시세' }, whisper: { cat: 'info', short: '항구 하나 시세' },
+    letter: { cat: 'shadow', short: '입항 면제' }, pass: { cat: 'sea', short: '해적 회피' },
+  };
+  const ICONS = {
+    haggler: '<rect x="7" y="9" width="34" height="30" rx="2"/><path d="M7 19h34M13 9v30M24 9v30M35 9v30"/><g fill="currentColor" stroke="none"><circle cx="13" cy="14" r="3.2"/><circle cx="24" cy="25" r="3.2"/><circle cx="24" cy="32" r="3.2"/><circle cx="35" cy="14" r="3.2"/><circle cx="13" cy="33" r="3.2"/><circle cx="35" cy="29" r="3.2"/></g>',
+    opener: '<path d="M12 43V5"/><path d="M12 8h25l-6 7 6 7H12z" fill="var(--seal)" stroke="currentColor"/><circle cx="12" cy="5" r="2" fill="currentColor"/><path d="M6 43h12"/>',
+    silk: '<path d="M8 13c0-4 9-4 9 0v22c0 4-9 4-9 0z" fill="currentColor" fill-opacity=".25"/><ellipse cx="12.5" cy="13" rx="4.5" ry="2"/><path d="M17 17c7-3 11 5 18 1 3-2 5-1 6 1v14c-1-2-3-3-6-1-7 4-11-4-18-1"/><path d="M21 23c4 0 8 3 14 0"/>',
+    porcelain: '<path d="M19 6h10v4c0 2 7 6 7 14s-5 15-12 15-12-7-12-15 7-12 7-14z"/><path d="M13 21h22" /><path d="M13.5 28h21"/><path d="M16 21c2 2 4 2 6 0s4-2 6 0 4 2 6 0" stroke="var(--g2)"/><path d="M18 39h12"/>',
+    pepper: '<path d="M22 22c-2-6 0-12 6-15"/><path d="M27 9c6-5 12-3 14 1-6 4-10 3-14-1z" fill="currentColor" fill-opacity=".45"/><g fill="currentColor" stroke="none"><circle cx="17" cy="27" r="4.2"/><circle cx="26" cy="26" r="4.2"/><circle cx="21" cy="34" r="4.2"/><circle cx="30" cy="33" r="4.2"/><circle cx="14" cy="36" r="3.6"/><circle cx="25" cy="41" r="3.4"/></g>',
+    tongsa: '<path d="M5 9h22v14H15l-6 5v-5H5z"/><path d="M21 21h22v14h-4v5l-6-5H21z" fill="currentColor" fill-opacity=".25"/><path d="M10 14h12M10 18h8M26 26h12M26 30h8"/>',
+    rumor: '<path d="M18 41c-4 0-7-3-7-6 0-5 5-5 5-11a10 10 0 1 1 20 0c0 6-6 8-6 12"/><path d="M21 24a5 5 0 1 1 10 0c0 3-3 3-3 6"/><path d="M39 13c3 3 3 9 0 12M43 9c5 5 5 15 0 20"/>',
+    owner: '<circle cx="24" cy="9" r="4"/><path d="M24 13v29M15 20h18M8 28c0 8 7 14 16 14s16-6 16-14"/><path d="M8 28l-3 4M8 28l4 2M40 28l3 4M40 28l-4 2"/>',
+    gaekju: '<path d="M24 6v34M14 41h20M9 12h30"/><path d="M9 12L4 25h10zM39 12l-5 13h10z"/><path d="M3 25a6 3 0 0 0 12 0M33 25a6 3 0 0 0 12 0"/><circle cx="24" cy="6" r="2" fill="currentColor"/>',
+    assayer: '<path d="M5 29c4 2 9-6 19-6s15 8 19 6c0 6-9 10-19 10S5 35 5 29z" fill="currentColor" fill-opacity=".3"/><ellipse cx="24" cy="25" rx="7" ry="3.5"/><circle cx="34" cy="12" r="6"/><path d="M38 16l5 5"/>',
+    clerk: '<path d="M7 10h15c2 0 2 2 2 2v28s0-2-2-2H7z"/><path d="M41 10H26c-2 0-2 2-2 2v28s0-2 2-2h15z"/><path d="M11 17h8M11 22h8M11 27h6M29 17h8M29 22h8"/><path d="M33 26l9-14 2 1-8 15z" fill="currentColor"/>',
+    bulk: '<rect x="5" y="26" width="17" height="15"/><rect x="26" y="26" width="17" height="15"/><rect x="15" y="9" width="18" height="15"/><path d="M5 26l17 15M26 26l17 15M15 9l18 15"/>',
+    wokou: '<path d="M9 41L37 9M39 41L11 9"/><path d="M6 37l6 6M42 37l-6 6"/><path d="M34 7l6 1 1 6M14 7l-6 1-1 6"/><circle cx="24" cy="25" r="3" fill="var(--seal)"/>',
+    customsman: '<path d="M12 25c0-8 5-14 12-14s12 6 12 14z" fill="currentColor" fill-opacity=".3"/><path d="M5 25h38"/><ellipse cx="8" cy="20" rx="4" ry="2.4"/><ellipse cx="40" cy="20" rx="4" ry="2.4"/><circle cx="24" cy="36" r="7" fill="var(--gold)" stroke="currentColor"/><rect x="21.5" y="33.5" width="5" height="5" fill="var(--card)" stroke="currentColor" stroke-width="1.5"/>',
+    gunner: '<path d="M7 23l27-9 4 10-27 9z" fill="currentColor" fill-opacity=".3"/><path d="M34 14l4 10"/><circle cx="16" cy="35" r="6.5"/><circle cx="16" cy="35" r="1.8" fill="currentColor"/><path d="M41 15l4-2M42 20h4M41 25l4 2"/>',
+    navigator: '<circle cx="24" cy="24" r="18"/><path d="M24 9l5 15-5 15-5-15z" fill="currentColor" fill-opacity=".3"/><path d="M24 9l5 15h-10z" fill="var(--seal)" stroke="currentColor"/><circle cx="24" cy="24" r="2" fill="currentColor"/><path d="M24 3v3M24 42v3M3 24h3M42 24h3"/>',
+    cat: '<path d="M12 19l1-11 8 6h6l8-6 1 11"/><circle cx="24" cy="27" r="13" fill="currentColor" fill-opacity=".15"/><path d="M19 26h.1M29 26h.1" stroke-width="4"/><path d="M21 31c1.5 2 4.5 2 6 0"/><path d="M14 30l-6-1M14 33l-6 2M34 30l6-1M34 33l6 2"/><circle cx="24" cy="42" r="3" fill="var(--gold)"/>',
+    chief: '<path d="M5 34h38l-5 7H10z" fill="currentColor"/><path d="M14 34V13M24 34V7M34 34V13"/><path d="M14 14l7 4-7 4zM24 8l9 5-9 5zM34 14l6 4-6 4z" fill="var(--seal)"/><path d="M19 4l5-3 5 3"/>',
+    bulletin: '<path d="M11 9h24v27a4 4 0 0 1-4 4H15"/><path d="M15 40a4 4 0 0 1-4-4V11a2 2 0 0 1 4 0v25"/><path d="M19 16h12M19 22h12M19 28h7"/><circle cx="32" cy="34" r="4.5" fill="var(--seal)" stroke="none"/>',
+    whisper: '<path d="M5 11h38v21H23l-8 7v-7H5z"/><g fill="currentColor" stroke="none"><circle cx="15" cy="21.5" r="2.6"/><circle cx="24" cy="21.5" r="2.6"/><circle cx="33" cy="21.5" r="2.6"/></g>',
+    letter: '<rect x="5" y="12" width="38" height="25" rx="2"/><path d="M5 14l19 13 19-13"/><circle cx="24" cy="29" r="5.5" fill="var(--seal)" stroke="currentColor"/>',
+    pass: '<path d="M15 7h18v31l-9 5-9-5z" fill="currentColor" fill-opacity=".18"/><circle cx="24" cy="12" r="2.2"/><path d="M19 19h10M19 25h10M19 31h10"/>',
+    salt: '<path d="M14 14c0-4 20-4 20 0l4 24c0 4-28 4-28 0z" fill="currentColor" fill-opacity=".2"/><path d="M14 14h20M20 10l4-4 4 4M18 26h12M17 32h14"/>',
+    silversmith: '<path d="M8 36c3 2 6-4 14-4s11 6 14 4c0 4-6 7-14 7S8 40 8 36z" fill="currentColor" fill-opacity=".3"/><path d="M26 6l12 12-4 4-12-12z" fill="currentColor"/><path d="M28 16L14 30"/>',
+    smuggler: '<path d="M14 42c0-12 4-22 12-22s12 10 12 22"/><path d="M18 22c0-8 4-14 8-14s8 6 8 14"/><circle cx="26" cy="20" r="3" fill="currentColor"/><path d="M6 30c0-5 8-5 8 0v10H6z" fill="var(--g4)" stroke="currentColor"/>',
+    porter: '<path d="M14 42L20 8M34 42L28 8M16 30h16M18 20h12"/><rect x="18" y="11" width="12" height="9" fill="currentColor" fill-opacity=".35"/>',
+    chanty: '<path d="M18 30V10l16-4v20"/><circle cx="14" cy="30" r="4" fill="currentColor"/><circle cx="30" cy="26" r="4" fill="currentColor"/><path d="M4 40c4-3 8-3 12 0s8 3 12 0 8-3 12 0"/>',
+    gambler: '<rect x="6" y="14" width="18" height="18" rx="3" transform="rotate(-12 15 23)"/><rect x="24" y="18" width="18" height="18" rx="3" transform="rotate(10 33 27)"/><g fill="currentColor" stroke="none"><circle cx="12" cy="20" r="1.8"/><circle cx="17" cy="26" r="1.8"/><circle cx="29" cy="23" r="1.8"/><circle cx="37" cy="31" r="1.8"/><circle cx="33" cy="27" r="1.8"/></g>',
+    auntie: '<path d="M6 18l4-10h28l4 10z" fill="var(--seal)" stroke="currentColor"/><path d="M8 18v22M40 18v22M6 40h36"/><path d="M14 30h20v10H14z" fill="currentColor" fill-opacity=".25"/>',
+    oldsalt: '<path d="M6 30l30-14 3 6-30 14z" fill="currentColor" fill-opacity=".3"/><path d="M36 16l6-3 2 5-6 3"/><path d="M14 34l-4 10M20 31l4 13"/>',
+    miser: '<ellipse cx="18" cy="36" rx="10" ry="4"/><path d="M8 36v-6c0 2 4 4 10 4s10-2 10-4v6M8 30v-6c0 2 4 4 10 4s10-2 10-4v6"/><ellipse cx="18" cy="24" rx="10" ry="4"/><rect x="30" y="10" width="12" height="10" rx="2" fill="currentColor"/><path d="M33 10V7a3 3 0 0 1 6 0v3"/>',
+    apprentice: '<path d="M24 42V22"/><path d="M24 26c-8 0-12-6-12-12 8 0 12 6 12 12z" fill="currentColor" fill-opacity=".4"/><path d="M24 22c6 0 10-5 10-10-6 0-10 5-10 10z" fill="currentColor" fill-opacity=".25"/><path d="M14 42h20"/>',
+    tycoon: '<path d="M6 34l4-20 9 10 5-14 5 14 9-10 4 20z" fill="var(--gold)" stroke="currentColor"/><path d="M6 38h36"/><circle cx="24" cy="10" r="2.5" fill="var(--seal)"/>',
+    copier: '<circle cx="20" cy="16" r="6"/><path d="M8 42c0-10 5-16 12-16s12 6 12 16"/><circle cx="30" cy="18" r="6" fill="currentColor" fill-opacity=".35" stroke="none"/><path d="M18 42c0-9 5-14 12-14s12 5 12 14" fill="currentColor" fill-opacity=".35" stroke="none"/>',
+    seaking: '<path d="M24 44V8M14 10v8c0 4 4 6 10 6s10-2 10-6v-8"/><path d="M24 4l-3 6h6z" fill="currentColor"/><path d="M4 40c4-3 8-3 12 0s8 3 12 0 8-3 12 0"/>',
+    mint: '<circle cx="24" cy="24" r="17" fill="var(--gold)" stroke="currentColor"/><rect x="19" y="19" width="10" height="10" fill="var(--card)" stroke="currentColor"/><path d="M24 7v4M24 37v4M7 24h4M37 24h4"/>',
+    seal: '<rect x="10" y="22" width="28" height="18" rx="2" fill="var(--seal)" stroke="currentColor"/><path d="M18 22V12a6 6 0 0 1 12 0v10"/><path d="M17 31h14M24 26v10" stroke="var(--card)"/>',
+    ledger: '<path d="M10 7h25a4 4 0 0 1 4 4v30H14a4 4 0 0 1-4-4z"/><path d="M10 37a4 4 0 0 1 4-4h25"/><rect x="16" y="13" width="17" height="11" fill="var(--g)" stroke="currentColor" stroke-width="1.5"/>',
+  };
+  function icon(key) { return '<svg viewBox="0 0 48 48" aria-hidden="true">' + (ICONS[key] || '') + '</svg>'; }
+  function empShort(id, mode) {
+    if (id === 'assayer') return '은 ×' + (1 + 0.2 * (S.silverSales + 1)).toFixed(1);
+    if (id === 'clerk') return '전부 ×' + (1 + 0.15 * Math.max(1, S.employees.length + (mode === 'shop' ? 1 : 0))).toFixed(2);
+    if (id === 'miser') return '+' + Math.min(450, Math.floor((S.cash + S.bank) / 1000) * 15) + ' (현금 비례)';
+    if (id === 'apprentice') return '+' + Math.min(300, 20 + 10 * (S.appSales || 0)) + ' (성장 중)';
+    if (id === 'seaking') return '×' + (1 + 0.12 * (S.freshSales || 0)).toFixed(2) + ' (실적마다↑)';
+    if (id === 'mint') return '×' + Math.min(4, 1 + 0.1 * Math.floor((S.cash + S.bank) / 10000)).toFixed(1) + ' (재산 비례)';
+    return META[id].short;
+  }
+  function empCard(id, idx, mode) {
+    const e = E.EMP[id], m = META[id], t = TYPE[m.type];
+    return '<div class="jcard emp r' + e.rarity + '"' + (mode === 'crew' ? ' data-idx="' + idx + '"' : '') + ' data-tip="emp:' + id + ':' + mode + '" tabindex="0" style="--cat:var(--c-' + m.cat + ')">' +
+      '<div class="jname">' + e.name + '</div><div class="art">' + icon(id) + '</div><div class="jeff">' + empShort(id, mode) + '</div>' +
+      '<span class="jtype t-' + m.type + '" aria-hidden="true">' + t[0] + '</span>' +
+      '<span class="jtier" aria-label="' + E.TIERS[e.rarity].name + '급">' + E.TIERS[e.rarity].hanja + '</span>' +
+      (mode === 'crew' ? '<span class="jslotno">' + (idx + 1) + '</span>' : '') + '</div>';
+  }
+  function conCard(id) {
+    const k = E.CONS[id], isLedger = k.good !== undefined;
+    const style = isLedger ? '--cat:var(--g' + k.good + ');--g:var(--g' + k.good + ')' : '--cat:var(--c-' + CONMETA[id].cat + ')';
+    return '<div class="jcard tok" data-tip="con:' + id + '" tabindex="0" style="' + style + '"><div class="jname">' + k.name + '</div>' +
+      '<div class="art">' + icon(isLedger ? 'ledger' : id) + '</div><div class="jeff">' + (isLedger ? '배수 +0.5' : CONMETA[id].short) + '</div></div>';
+  }
+  function tipHtml(key) {
+    const [kind, id, mode] = key.split(':');
+    if (kind === 'emp') {
+      const e = E.EMP[id], m = META[id], t = TYPE[m.type];
+      const T = E.TIERS[e.rarity], rare = T.name + '급(' + T.hanja + ')';
+      return '<span class="t">' + e.name + '</span><span class="kind">' + t[0] + ' ' + t[1] + '</span><span class="kind">' + CATNAME[m.cat] + '</span><span class="kind">' + rare + '</span>' +
+        '<div>' + e.desc + '</div><div class="meta">' + t[2] + '</div>' +
+        '<div class="meta">성과급: 이 직원이 늘린 이익의 ' + Math.round(T.comm * 100) + '%</div>' +
+        '<div class="meta">' + (mode === 'shop' ? '고용비 ' + fmt(e.cost) + '냥, ' : '') + '월급 ' + E.wageOf(S, id) + '냥(해마다 오름)</div>';
+    }
+    const k = E.CONS[id];
+    return '<span class="t">' + k.name + '</span><span class="kind">소모품</span><div>' + k.desc + '</div><div class="meta">한 번 쓰면 사라집니다. 값 ' + fmt(k.cost) + '냥</div>';
+  }
+  const tip = document.createElement('div'); tip.className = 'tip'; tip.hidden = true; tip.setAttribute('role', 'tooltip'); document.body.appendChild(tip);
+  function showTip(el) {
+    tip.innerHTML = tipHtml(el.dataset.tip); tip.hidden = false;
+    const r = el.getBoundingClientRect(), tw = tip.offsetWidth, th = tip.offsetHeight;
+    const x = Math.max(8, Math.min(innerWidth - tw - 8, r.left + r.width / 2 - tw / 2));
+    let y = r.top - th - 10; if (y < 8) y = r.bottom + 10;
+    tip.style.left = x + 'px'; tip.style.top = y + 'px';
+  }
+  function hideTip() { tip.hidden = true; }
+  document.addEventListener('mouseover', (e) => { const el = e.target.closest && e.target.closest('[data-tip]'); if (el) showTip(el); else hideTip(); });
+  document.addEventListener('focusin', (e) => { const el = e.target.closest && e.target.closest('[data-tip]'); if (el) showTip(el); });
+  document.addEventListener('focusout', hideTip);
+  document.addEventListener('pointerdown', (e) => {
+    if (e.pointerType !== 'touch') return;
+    const el = e.target.closest && e.target.closest('[data-tip]'); if (el) showTip(el); else hideTip();
+  });
+
+  function renderCrew() {
+    hideTip();
+    let h = '';
+    for (let i = 0; i < E.MAX_EMP; i++) {
+      const id = S.employees[i];
+      if (!id) { h += '<div class="jslot"><div class="jcard empty">' + (i + 1) + '번<br>빈 자리</div><div class="jctl"></div></div>'; continue; }
+      h += '<div class="jslot">' + empCard(id, i, 'crew') + '<div class="jctl">' +
+        '<button type="button" data-mv="' + i + '" data-dir="-1" aria-label="왼쪽으로"' + (i === 0 ? ' disabled' : '') + '>◀</button>' +
+        '<button type="button" data-mv="' + i + '" data-dir="1" aria-label="오른쪽으로"' + (i === S.employees.length - 1 ? ' disabled' : '') + '>▶</button>' +
+        '<button type="button" class="danger" data-fire="' + i + '">' + (fireConfirm === i ? '정말?' : '해고') + '</button></div></div>';
+    }
+    $('#emps').innerHTML = h;
+    let c = '';
+    for (let i = 0; i < E.MAX_CONS; i++) {
+      const id = S.consumables[i];
+      if (!id) { c += '<div class="jslot"><div class="jcard tok empty">소모품<br>빈 자리</div><div class="jctl"></div></div>'; continue; }
+      c += '<div class="jslot">' + conCard(id) + '<div class="jctl"><button type="button" data-use="' + i + '">사용</button></div></div>';
+    }
+    $('#cons').innerHTML = c;
+  }
+  $('#crew').addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b || busy) return;
+    if (b.id === 'btn-shop') { openShop(); return; }
+    if (b.id === 'btn-fuse') { fuseSel = []; openFuse(); return; }
+    if (b.dataset.mv !== undefined) { E.moveEmp(S, +b.dataset.mv, +b.dataset.dir); fireConfirm = -1; renderCrew(); save(); }
+    else if (b.dataset.fire !== undefined) {
+      const i = +b.dataset.fire;
+      if (fireConfirm !== i) { fireConfirm = i; renderCrew(); return; }
+      const fid = S.employees[i]; const r = E.fire(S, i); fireConfirm = -1; if (r.ok) TELE.ev('fire', { id: fid, m: S.month }); if (!r.ok) toast(r.reason); renderAll(); save();
+    } else if (b.dataset.use !== undefined) {
+      const ui = +b.dataset.use;
+      if (S.consumables[ui] === 'whisper') { pickPortFor(ui); return; }
+      const cid = S.consumables[ui]; const r = E.useCons(S, ui); if (r.ok) TELE.ev('cons_use', { id: cid, m: S.month });
+      if (!r.ok) toast(r.reason); else { chime(); if (r.msg) toast(r.msg); }
+      renderAll(); save();
+    }
+  });
+
+  async function pickPortFor(ui) {
+    const opts = E.PORTS.map((p) => p.id === S.port ? '' : '<button type="button" data-tp="' + p.id + '"><span><b style="font-family:var(--f-ui)">' + p.name + '</b><span class="sub">장부: ' + ageText(S.month - S.known[p.id].month) + ', ' + E.travelMonths(S, S.port, p.id) + '개월 거리</span></span></button>').join('');
+    openOv('<div class="sheet"><h2>탐문</h2><p>어느 항구의 지금 시세를 알아볼까?</p><div class="odds">' + opts + '</div><div class="acts2"><button class="btn ghost" type="button" data-close>그만두기</button></div></div>');
+    const b = await waitClick('[data-tp],[data-close]');
+    if (b.dataset.tp === undefined) return;
+    closeOv();
+    const r = E.useCons(S, ui, +b.dataset.tp); if (r.ok) TELE.ev('cons_use', { id: 'whisper', port: +b.dataset.tp, m: S.month });
+    if (!r.ok) toast(r.reason); else { chime(); toast(r.msg); tab = 'ledger'; }
+    renderAll(); save();
+  }
+
+  // ── 오버레이 공통 ──
+  const ov = $('#ov');
+  function openOv(html) { ov.innerHTML = html; ov.hidden = false; const f = ov.querySelector('[data-focus]') || ov.querySelector('button'); if (f) f.focus(); }
+  function closeOv() { hideTip(); ov.hidden = true; ov.innerHTML = ''; $('#crew').classList.remove('lift'); }
+  function waitClick(sel) {
+    return new Promise((res) => {
+      function h(e) { const b = e.target.closest(sel); if (!b) return; ov.removeEventListener('click', h); res(b); }
+      ov.addEventListener('click', h);
+    });
+  }
+  function toast(msg) {
+    const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t);
+    setTimeout(() => t.remove(), 2600);
+  }
+  function coins(n, x, y) {
+    if (reduce) return;
+    for (let i = 0; i < n; i++) {
+      const c = document.createElement('span'); c.className = 'coin';
+      c.style.left = x + 'px'; c.style.top = y + 'px';
+      const a = Math.random() * Math.PI * 2, r = 80 + Math.random() * 180;
+      c.style.setProperty('--dx', Math.cos(a) * r + 'px'); c.style.setProperty('--dy', (Math.sin(a) * r * 0.6 + 140) + 'px');
+      c.style.animationDelay = Math.random() * 0.12 + 's';
+      document.body.appendChild(c); setTimeout(() => c.remove(), 1300);
+    }
+  }
+  async function showReport(title, lines) {
+    openOv('<div class="sheet"><h2>' + title + '</h2><ul class="lines">' + lines.map((l) => '<li>' + l + '</li>').join('') + '</ul><div class="acts2"><button class="btn" type="button" data-ok data-focus>계속</button></div></div>');
+    await waitClick('[data-ok]'); closeOv();
+  }
+
+  // ── 판매 정산 연쇄 ──
+  async function playCascade(r) {
+    $('#crew').classList.add('lift');
+    const base = r.steps[0];
+    openOv('<div class="sheet casc" id="casc"><div class="ttl">' + base.label + '</div>' +
+      '<div class="base">매각 ' + fmt(base.rev) + ' − 원가 ' + fmt(base.cost) + '</div>' +
+      '<div class="total' + (base.v < 0 ? ' neg' : '') + '" id="ctot"><span class="num" id="cv">' + fmt(base.v) + '</span><small>냥 이익</small></div>' +
+      '<ol id="cs"></ol><div class="hint" id="chint">누르면 건너뜁니다</div></div>');
+    let skip = false;
+    const onSkip = () => { skip = true; };
+    ov.addEventListener('click', onSkip);
+    const cv = $('#cv'), cs = $('#cs');
+    let cur = base.v, delay = 560, i = 0;
+    tone(330, 0.12, 'triangle', 0.1);
+    function countTo(to) {
+      return new Promise((res) => {
+        const from = cur; cur = to;
+        if (skip || reduce) { cv.textContent = fmt(to); res(); return; }
+        const st = performance.now(), dur = 240;
+        let fin = false;
+        const end = () => { if (!fin) { fin = true; cv.textContent = fmt(to); res(); } };
+        setTimeout(end, dur + 120);
+        (function f(now) { if (fin) return; const k = Math.min(1, (now - st) / dur); cv.textContent = fmt(from + (to - from) * k); if (k < 1) requestAnimationFrame(f); else end(); })(st);
+        $('#ctot').classList.toggle('neg', to < 0);
+      });
+    }
+    for (const st of r.steps.slice(1)) {
+      if (!skip) await sleep(delay);
+      i++;
+      const li = document.createElement('li');
+      let ef = '', cls = '';
+      if (st.kind === 'add') { ef = '+' + fmt(st.amount); cls = 'add'; }
+      else if (st.kind === 'mult') { ef = '×' + st.mult.toFixed(2).replace(/\.?0+$/, ''); cls = 'mult'; }
+      else if (st.kind === 'ledger') { ef = '×' + st.mult.toFixed(1); cls = 'ledger'; }
+      else if (st.kind === 'info') { ef = '+' + fmt(st.amount); cls = 'add dim'; }
+      else if (st.kind === 'boss') { ef = '−20%'; cls = 'boss'; }
+      else if (st.kind === 'banner') { ef = '↻'; cls = 'banner'; }
+      else if (st.kind === 'comm') { ef = '−' + fmt(-st.amount); cls = 'boss'; }
+      else { ef = '–'; cls = 'dim'; }
+      li.className = cls;
+      li.innerHTML = '<span>' + st.label + (st.kind === 'info' ? ' (매각가에 반영됨)' : '') + '</span><span class="ef">' + ef + '</span>';
+      cs.appendChild(li);
+      if (st.idx !== undefined && st.idx >= 0) {
+        const card = document.querySelector('#emps .emp[data-idx="' + st.idx + '"]');
+        if (card) {
+          card.classList.remove('fire'); void card.offsetWidth; card.classList.add('fire');
+          const fl = document.createElement('span'); fl.className = 'floaty'; fl.textContent = ef; card.appendChild(fl); setTimeout(() => fl.remove(), 900);
+        }
+      }
+      if (st.kind === 'banner') { chime(); thud(true); const cc = $('#casc'); cc.classList.remove('shake'); void cc.offsetWidth; cc.classList.add('shake'); delay = Math.max(delay, 420); }
+      else if (st.kind === 'mult' || st.kind === 'ledger') { tone(330 * Math.pow(1.122, i + 2), 0.14, 'triangle', 0.13); thud(false); }
+      else if (st.kind === 'add') tone(330 * Math.pow(1.122, i), 0.1, 'square', 0.06);
+      else tone(200, 0.08, 'sine', 0.05);
+      await countTo(st.v);
+      delay = Math.max(200, delay * 0.82);
+    }
+    if (!skip) await sleep(260);
+    cv.textContent = fmt(r.profit);
+    const sheet = $('#casc');
+    const big = r.profit >= Math.max(800, Math.abs(base.v) * 2.5);
+    const st = document.createElement('div');
+    if (r.profit > 0) { st.className = 'stamp' + (big ? ' big' : ''); st.innerHTML = '成<small>+' + fmt(r.profit) + '</small>'; }
+    else { st.className = 'stamp grey'; st.innerHTML = '損<small>' + fmt(r.profit) + '</small>'; }
+    sheet.appendChild(st);
+    thud(big);
+    if (r.profit > 0) {
+      sheet.classList.add('shake');
+      const rect = sheet.getBoundingClientRect();
+      coins(big ? 34 : 12, rect.left + rect.width * 0.75, rect.top + 40);
+      coinSound(big ? 14 : 5);
+      if (big) chime();
+    }
+    $('#chint').textContent = '누르면 닫힙니다';
+    ov.removeEventListener('click', onSkip);
+    await Promise.race([sleep(skip ? 900 : 1800), new Promise((res) => ov.addEventListener('click', res, { once: true }))]);
+    closeOv();
+  }
+
+  // ── 상환 정산 ──
+  async function showSettlement(st) {
+    const ok = st.ok;
+    TELE.ev('settle', { due: st.due.due, total: st.total, have: Math.round(st.have), ok, grace: !!st.grace, fire: st.fire ? Math.round(st.fire.amount) : 0, boss: st.due.boss !== undefined, m: S.month, diff: S.diff });
+    openOv('<div class="sheet settle" id="stl"><h2>' + E.dateLabel(st.due.due) + ' 상환' + (st.due.boss !== undefined ? ', 연말 결산' : '') + '</h2>' +
+      '<p>진 대인의 수금꾼이 왔다. ' + (st.tax ? '세무 감사관이 화물세 ' + fmt(st.tax) + '냥을 얹었다. ' : '') + (st.fire ? '<br><b style="color:var(--bad)">현금이 모자라 ' + st.fire.goods.join(', ') + '을(를) 시세 절반에 급매했다(' + fmt(st.fire.amount) + '냥).</b>' : '') + '</p>' +
+      '<div class="gauge' + (ok ? '' : ' short') + '"><i id="stg"></i></div>' +
+      '<div class="gl"><span>보유 ' + fmt(st.have) + '</span><span>필요 ' + fmt(st.total) + '</span></div>' +
+      '<p id="stmsg" style="min-height:1.4em"></p>' +
+      '<div class="acts2"><button class="btn" type="button" data-ok data-focus>' + (ok || st.grace ? '계속' : '결과 보기') + '</button></div></div>');
+    const g = $('#stg');
+    g.style.transition = 'width 1.1s cubic-bezier(.3,.8,.3,1)';
+    setTimeout(() => { g.style.width = Math.min(100, st.ratio * 100) + '%'; }, 30);
+    if (!reduce) await sleep(1150);
+    const sh = $('#stl'), stamp = document.createElement('div');
+    if (ok) {
+      stamp.className = 'stamp big'; stamp.innerHTML = '畢<small>상환 완료</small>';
+      let m = '갚았다. 남은 돈 ' + fmt(st.have - st.total) + '냥.';
+      if (st.bonus) m += ' 두 배 넘게 준비해 둔 덕에 보너스: ' + (st.bonus.cons ? E.CONS[st.bonus.cons].name : fmt(st.bonus.cash) + '냥') + '.';
+      $('#stmsg').textContent = m;
+      thud(true); chime(); sh.classList.add('shake');
+      if (st.ratio >= 2) { const rc = sh.getBoundingClientRect(); coins(24, rc.left + rc.width / 2, rc.top + 30); coinSound(10); }
+    } else if (st.grace) {
+      stamp.className = 'stamp big grey'; stamp.innerHTML = '延<small>연체</small>';
+      $('#stmsg').textContent = fmt(st.grace.short) + '냥이 모자라 이번 상환을 미뤘다. 돈과 화물은 그대로 두고, 다음 상환에 ' + fmt(st.grace.carry) + '냥(이번 상환액의 1.2배)이 얹힌다. 남은 연체 기회 ' + st.grace.left + '번.';
+      thud(true); tone(180, 0.5, 'triangle', 0.1, 120);
+    } else {
+      stamp.className = 'stamp big'; stamp.innerHTML = '破<small>파산</small>';
+      $('#stmsg').textContent = fmt(st.total - st.have) + '냥이 모자랐다. 수금꾼들이 배를 압류한다.';
+      thud(true); tone(140, 0.8, 'sawtooth', 0.12, 60);
+    }
+    sh.appendChild(stamp);
+    await waitClick('[data-ok]'); closeOv();
+  }
+
+  // ── 해적 ──
+  async function pirateFlow() {
+    const fleet = S.pending.fleet, o = E.pirateOdds(S, fleet);
+    tone(220, 0.4, 'sawtooth', 0.08, 110);
+    openOv('<div class="sheet"><h2>해적 선단 ' + fleet + '척!</h2><p>돛대 위 망꾼이 소리친다. 어떻게 할까?</p><div class="odds">' +
+      '<button type="button" data-p="fight"' + (S.guns ? '' : ' disabled') + '><span>싸운다<span class="sub">대포 ' + S.guns + '문' + (E.has(S, 'gunner') ? ', 포르투갈 포수 2배' : '') + '. 지면 화물 절반 이상과 대포 하나를 잃는다</span></span><b>승률 ' + Math.round(o.fight * 100) + '%</b></button>' +
+      '<button type="button" data-p="run" data-focus><span>달아난다<span class="sub">잡히면 화물 4분의 1에서 절반을 빼앗긴다</span></span><b>성공 ' + Math.round(o.run * 100) + '%</b></button>' +
+      '<button type="button" data-p="toll"><span>통행세를 낸다<span class="sub">현금의 4분의 1(최소 50냥)</span></span><b>' + fmt(Math.min(S.cash, o.toll)) + '냥</b></button>' +
+      '</div></div>');
+    const b = await waitClick('[data-p]');
+    const out = E.resolvePirate(S, b.dataset.p);
+    TELE.ev('pirate', { fleet, choice: b.dataset.p, result: out.result, odds: { fight: +o.fight.toFixed(2), run: +o.run.toFixed(2), toll: o.toll }, guns: S.guns, m: S.month });
+    let stampHtml = '';
+    if (out.result === 'win') { stampHtml = '<div class="stamp big">勝<small>+' + fmt(out.booty) + '</small></div>'; }
+    openOv('<div class="sheet" id="pres"><h2>' + (out.result === 'win' ? '격파!' : out.result === 'escaped' ? '따돌렸다' : out.result === 'paid' ? '통행세' : '빼앗겼다') + '</h2><p>' + out.text + '</p>' + stampHtml +
+      '<div class="acts2"><button class="btn" type="button" data-ok data-focus>계속</button></div></div>');
+    if (out.result === 'win') { thud(true); const rc = $('#pres').getBoundingClientRect(); coins(26, rc.left + rc.width * 0.7, rc.top + 30); coinSound(12); chime(); $('#pres').classList.add('shake'); }
+    else if (out.result === 'lose' || out.result === 'caught') tone(150, 0.5, 'sawtooth', 0.1, 70);
+    await waitClick('[data-ok]'); closeOv();
+    return out;
+  }
+
+  // ── 진행 ──
+  async function depart(dest) {
+    if (busy || dest === null) return;
+    busy = true;
+    const from = S.port, months = E.travelMonths(S, from, dest);
+    const risk = { pirate: +E.pirateRisk(S, from, dest, months).toFixed(3), storm: +E.stormRisk(S, months).toFixed(3) };
+    const tsec = TELE.turnSec(), cargoV = Math.round(E.cargoValue(S, S.port)), cashB = Math.round(S.cash);
+    const r = E.startVoyage(S, dest);
+    if (!r.ok) { toast(r.reason); busy = false; return; }
+    TELE.ev('voyage', { from, to: dest, months, risk, decisionSec: tsec, cargoValue: cargoV, cash: cashB, events: (r.events || []).map((e) => e.type), pirate: !!r.pirate, m: S.month });
+    selDest = null; renderMap();
+    if (r.wageLeft && r.wageLeft.length) await showReport('밀린 월급', r.wageLeft.map((id) => E.EMP[id].name + '이(가) 월급을 못 받고 떠났다.'));
+    for (const st of r.settled || []) await showSettlement(st);
+    if (S.reward && !S.over && !S.win) await rewardPick();
+    if (S.over || S.win) { save(); renderAll(); await showEnd(); busy = false; return; }
+    let arrival = r.arrival;
+    const to = r.pirate ? S.pending.dest : S.port;
+    if (r.pirate) {
+      await animateShip(from, to, months, 0, 0.55);
+      if (r.events && r.events.length) await showReport('항해 보고', r.events.map((e) => e.text));
+      const out = await pirateFlow();
+      arrival = out.arrival;
+      await animateShip(from, to, months, 0.55, 1);
+    } else {
+      await animateShip(from, to, months);
+      if (r.events && r.events.length) await showReport('항해 보고', r.events.map((e) => e.text));
+    }
+    shipPos = null;
+    if (arrival && arrival.events.length) await showReport(E.PORTS[S.port].name + ' 입항', arrival.events.map((e) => e.text));
+    revealPending = true; tab = 'market';
+    TELE.ev('turn', TELE.snap());
+    renderAll(); save();
+    playRevealSounds();
+    busy = false;
+  }
+
+  async function waitHere() {
+    if (busy) return; busy = true;
+    const r = E.waitMonth(S);
+    TELE.ev('wait', { decisionSec: TELE.turnSec(), m: S.month, port: S.port });
+    if (r.wageLeft && r.wageLeft.length) await showReport('밀린 월급', r.wageLeft.map((id) => E.EMP[id].name + '이(가) 월급을 못 받고 떠났다.'));
+    for (const st of r.settled || []) await showSettlement(st);
+    if (S.reward && !S.over && !S.win) await rewardPick();
+    if (S.over || S.win) { save(); renderAll(); await showEnd(); busy = false; return; }
+    if (r.arrival && r.arrival.events.length) await showReport(E.PORTS[S.port].name + '에서 한 달', r.arrival.events.map((e) => e.text));
+    revealPending = true; tab = 'market';
+    renderAll(); save(); playRevealSounds();
+    busy = false;
+  }
+
+  function playRevealSounds() {
+    const rv = S.lastReveal; if (!rv) return;
+    const p = rv.port;
+    const order = [0, 1, 2, 3, 4].sort((a, b) => (S.hold[a] > 0) - (S.hold[b] > 0));
+    order.forEach((g, i) => {
+      setTimeout(() => {
+        const ratio = S.prices[p][g] / E.normalPrice(p, g);
+        if (ratio >= 1.5 && S.hold[g] > 0) { chime(); coinSound(6); }
+        else if (ratio >= 1.5) tone(990, 0.12, 'sine', 0.07);
+        else tone(420 + i * 30, 0.04, 'square', 0.03);
+      }, i * 160 + 120);
+    });
+    if (rv.confirmed && rv.confirmed.length) setTimeout(() => { chime(); thud(false); }, order.length * 160 + 200);
+  }
+
+  function rankHtml(fr, best, newBest) {
+    const bestTxt = !best ? '' : best.win ? best.rank + ' (빚의 ' + best.ratio.toFixed(1) + '배)' : '상환 ' + best.paid + '번째까지';
+    const bestLine = best ? '<p class="age">' + E.DIFFS[S.diff].name + ' 난이도 최고 기록: ' + bestTxt + '</p>' : '';
+    if (!fr) return '<div class="rank">' + (newBest ? '<p class="newbest">새 최고 기록!</p>' : '') + bestLine + '</div>';
+    const tiers = E.RANKS.map((r) => '<span class="' + (r === fr.rank ? 'on' : r.min < fr.rank.min ? 'past' : '') + '">' + r.name + '</span>').join('<i>›</i>');
+    return '<div class="rank"><p class="rank-t">칭호 <b>' + fr.rank.name + '</b> <span class="hj">' + fr.rank.hanja + '</span></p>' +
+      '<p>남긴 순자산이 빚 총액(' + fmt(E.totalDebt(S)) + '냥)의 <b class="num">' + fr.ratio.toFixed(1) + '배</b>' +
+      (fr.next ? ', ' + fr.next.min + '배를 넘기면 ' + fr.next.name : ', 더 오를 칭호가 없다') + '</p>' +
+      '<div class="rank-ladder">' + tiers + '</div>' + (newBest ? '<p class="newbest">새 최고 기록!</p>' : '') + bestLine + '</div>';
+  }
+  async function showEnd() {
+    const w = S.win, nw = E.netWorth(S);
+    const fr = w ? E.finalRank(S) : null;
+    // 난이도별 최고 기록(이 PC에만 저장)
+    let best = null, newBest = false;
+    try {
+      const key = 'eb_best_' + S.diff; best = JSON.parse(localStorage.getItem(key) || 'null');
+      const score = w ? 100 + fr.ratio : S.paid; // 완납은 항상 파산보다 위
+      if (!best || score > best.score) { newBest = !!best || w; best = { score, win: w, ratio: fr ? fr.ratio : 0, rank: fr ? fr.rank.name : '', paid: S.paid, worth: nw }; localStorage.setItem(key, JSON.stringify(best)); }
+    } catch (e) { best = null; }
+    if (TELE.game) {
+      TELE.ev('game_end', { result: w ? 'win' : 'bankrupt', m: S.month, paid: S.paid, worth: nw, rank: fr ? fr.rank.name : null, ratio: fr ? +fr.ratio.toFixed(2) : null, diff: S.diff, durSec: TELE.endGame(), stats: S.stats, emps: S.employees.slice(), ledger: S.ledger.slice(), guns: S.guns, shipLv: S.shipLv, graces: S.graces });
+    }
+    const survey = TELE.on ? '<div class="survey" id="survey"><p><b>잠깐, 이번 판 어땠나요?</b> (개발에 쓰입니다)</p>' +
+      '<div class="sv-row"><span>재미</span>' + [1, 2, 3, 4, 5].map((n) => '<button type="button" class="mini" data-fun="' + n + '">' + n + '</button>').join('') + '</div>' +
+      '<div class="sv-row"><span>한 판 더?</span><button type="button" class="mini" data-again2="1">하고 싶다</button><button type="button" class="mini" data-again2="0">그만</button></div>' +
+      '<input id="sv-c" type="text" maxlength="200" placeholder="한 줄 의견(선택): 어려웠던 점, 이상했던 점">' +
+      '<button type="button" class="btn ghost" data-svsend>의견 보내기</button><span class="age" id="sv-done"></span></div>' : '';
+    openOv('<div class="sheet" id="end"><h2>' + (w ? '빚을 모두 갚았다' : '파산') + '</h2>' +
+      '<p>' + (w ? '1582년 12월, 진 대인의 장부에서 당신의 이름이 지워졌다.' : E.dateLabel(S.month) + ', 상환 ' + S.paid + '번째까지 버텼다.') + '</p>' +
+      '<table><tbody>' +
+      '<tr><td>최종 순자산</td><td class="r num"><b>' + fmt(nw) + '냥</b></td></tr>' +
+      '<tr><td>한 번에 낸 최고 이익</td><td class="r num">' + fmt(S.stats.bestSale) + '냥</td></tr>' +
+      '<tr><td>가장 긴 정산 연쇄</td><td class="r num">' + Math.max(0, S.stats.bestSteps - 1) + '단계</td></tr>' +
+      '<tr><td>해적 약탈품</td><td class="r num">' + fmt(S.stats.booty) + '냥</td></tr>' +
+      '<tr><td>항해 횟수</td><td class="r num">' + S.stats.voyages + '번</td></tr>' +
+      '<tr><td>마지막 직원</td><td class="r">' + (S.employees.map((id) => E.EMP[id].name).join(', ') || '없음') + '</td></tr>' +
+      '</tbody></table>' + (w ? '<div class="stamp big">完<small>완납</small></div>' : '') + rankHtml(fr, best, newBest) + survey +
+      '<div class="acts2"><button class="btn ghost" type="button" data-close>닫기</button><button class="btn seal" type="button" data-again data-focus>새 판 시작</button></div></div>');
+    const sv = { fun: null, again: null };
+    const svEl = $('#survey');
+    if (svEl) svEl.addEventListener('click', (e) => {
+      const t = e.target.closest('button'); if (!t) return;
+      if (t.dataset.fun) { sv.fun = +t.dataset.fun; svEl.querySelectorAll('[data-fun]').forEach((x) => x.classList.toggle('sell', x === t)); }
+      if (t.dataset.again2 !== undefined) { sv.again = t.dataset.again2 === '1'; svEl.querySelectorAll('[data-again2]').forEach((x) => x.classList.toggle('sell', x === t)); }
+      if (t.dataset.svsend !== undefined) { TELE.ev('survey', { fun: sv.fun, again: sv.again, comment: ($('#sv-c').value || '').slice(0, 200), result: w ? 'win' : 'bankrupt', diff: S.diff }); $('#sv-done').textContent = '고맙습니다!'; t.disabled = true; }
+    });
+    if (w) { thud(true); chime(); const rc = $('#end').getBoundingClientRect(); coins(40, rc.left + rc.width / 2, rc.top + 30); coinSound(16); }
+    const b = await waitClick('[data-again],[data-close]');
+    if (svEl && (sv.fun !== null || sv.again !== null) && !$('#sv-done').textContent) TELE.ev('survey', { fun: sv.fun, again: sv.again, comment: ($('#sv-c').value || '').slice(0, 200), result: w ? 'win' : 'bankrupt', diff: S.diff });
+    TELE.game = null;
+    closeOv();
+    if (b.dataset.again !== undefined) newRun();
+  }
+
+  // ── 인맥 정리(합성) ──
+  let fuseSel = [];
+  function openFuse() {
+    hideTip();
+    if (S.employees.length < 3) { toast('직원이 셋 이상 있어야 인맥을 정리할 수 있습니다'); return; }
+    const o = fuseSel.length === 3 ? E.fuseOdds(S, fuseSel) : null;
+    const cards = S.employees.map((id, i) => '<div class="shopitem"><div class="pickwrap' + (fuseSel.indexOf(i) >= 0 ? ' picked' : '') + '" data-pick="' + i + '" role="button" tabindex="0" aria-pressed="' + (fuseSel.indexOf(i) >= 0) + '">' + empCard(id, i, 'shop') + '</div></div>').join('');
+    let odds = '<p class="age">내보낼 직원 셋을 고르세요(' + fuseSel.length + '/3). 정 1점, 병 2점, 을 3점, 갑 4점. 점수가 높을수록 좋은 사람이 옵니다.</p>';
+    if (o) {
+      const bar = (t, name) => '<div class="ob"><span>' + name + '</span><i style="width:' + Math.round(o.odds[t] * 100) + '%" class="t' + t + '"></i><b class="num">' + Math.round(o.odds[t] * 100) + '%</b></div>';
+      odds = '<div class="odds-bars"><p class="age">합계 ' + o.pts + '점' + (S.month < 12 ? ' (1년 차는 갑급 확률 절반)' : '') + '</p>' + bar(2, '병급 丙') + bar(3, '을급 乙') + bar(4, '갑급 甲') + '</div>';
+    }
+    openOv('<div class="sheet" style="width:min(720px,100%)"><h2>인맥 정리</h2><p>직원 셋을 내보내면 그들이 아는 사람 중 한 명을 소개받는다. 소개받은 사람은 고용비 없이 바로 일한다.</p>' +
+      '<div class="shop-row">' + cards + '</div>' + odds +
+      '<div class="acts2"><button class="btn ghost" type="button" data-close>닫기</button><button class="btn seal" type="button" data-fuse' + (o && S.cash >= o.fee ? '' : ' disabled') + '>소개받기' + (o ? ' (소개비 ' + fmt(o.fee) + '냥' + (o.owedGone ? ', 밀린 월급 ' + fmt(o.owedGone) + '냥 포함' : '') + ')' : '') + '</button></div></div>');
+  }
+  async function doFuse() {
+    const fz = fuseSel.map((i) => S.employees[i]); const fo = E.fuseOdds(S, fuseSel);
+    const r = E.fuse(S, fuseSel);
+    if (r.ok) TELE.ev('fuse', { gone: fz, got: r.id, tier: r.tier, pts: fo ? fo.pts : 0, fee: r.fee, m: S.month });
+    fuseSel = [];
+    if (!r.ok) { toast(r.reason); openFuse(); return; }
+    busy = true;
+    const T = E.TIERS[r.tier];
+    openOv('<div class="sheet reveal"><h2>소개받은 사람</h2><p class="age">' + r.gone.map((g) => E.EMP[g].name).join(', ') + '이(가) 떠나며 한 사람을 소개했다.</p>' +
+      '<div class="flip"><div class="fc back">人</div><div class="fc front">' + empCard(r.id, 0, 'shop') + '</div></div>' +
+      '<p class="reveal-msg" id="rvmsg">&nbsp;</p><div class="acts2"><button class="btn" type="button" data-ok data-focus>계속</button></div></div>');
+    tone(300, 0.25, 'triangle', 0.08, 600);
+    await sleep(reduce ? 0 : 900);
+    const fl = ov.querySelector('.flip'); if (fl) fl.classList.add('go', 't' + r.tier);
+    await sleep(reduce ? 0 : 450);
+    $('#rvmsg').textContent = T.name + '급(' + T.hanja + ') ' + E.EMP[r.id].name + '! ' + E.EMP[r.id].desc;
+    const sh = ov.querySelector('.sheet');
+    if (r.tier === 4) { chime(); setTimeout(chime, 260); thud(true); const rc = sh.getBoundingClientRect(); coins(40, rc.left + rc.width / 2, rc.top + 80); coinSound(16); sh.classList.add('shake'); }
+    else if (r.tier === 3) { chime(); thud(false); const rc = sh.getBoundingClientRect(); coins(14, rc.left + rc.width / 2, rc.top + 80); coinSound(6); }
+    else thud(false);
+    busy = false;
+    renderAll(); save();
+    await waitClick('[data-ok]'); closeOv();
+  }
+
+  // ── 플레이 기록(지인 테스트용) ──
+  // window.EUNBADA_CFG = { endpoint, token, channel } 가 있을 때만 전송. 없으면(아티팩트 등) 아무것도 보내지 않음.
+  const TELE = (() => {
+    const CFG = window.EUNBADA_CFG || null;
+    const VER = 'proto-0.4.2';
+    const ls = { get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
+    const uid = () => (Date.now().toString(36) + Math.random().toString(36).slice(2, 10));
+    const player = ls.get('eb.player', null) || { id: uid(), nick: '', consent: false };
+    ls.set('eb.player', player);
+    const session = uid();
+    let game = null, seq = 0, turnT = Date.now(), gameT = Date.now();
+    const queue = ls.get('eb.tq', []);
+    function ev(type, data) {
+      if (!CFG || player.optout) return;
+      const e = Object.assign({ t: Date.now(), type, player: player.id, nick: player.nick, session, game, seq: seq++, ver: VER, ch: CFG.channel || '' }, data || {});
+      queue.push(e); if (queue.length > 5000) queue.splice(0, queue.length - 5000);
+      ls.set('eb.tq', queue);
+      try { if (window.ebApp && window.ebApp.appendLog) window.ebApp.appendLog(JSON.stringify(e)); } catch (x) {}
+      if (type === 'game_end' || type === 'survey' || queue.length >= 40) flush();
+    }
+    let sending = false;
+    async function flush() {
+      if (!CFG || !CFG.endpoint || sending || !queue.length) return;
+      if (CFG.public && !player.consent) return; // 공개판: 동의 전에는 보내지 않음
+      sending = true;
+      const batch = queue.slice(0, 200);
+      try {
+        await fetch(CFG.endpoint, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ token: CFG.token, events: batch }) });
+        queue.splice(0, batch.length); ls.set('eb.tq', queue);
+      } catch (x) { /* 오프라인: 다음에 다시 */ }
+      sending = false;
+    }
+    if (CFG) {
+      setInterval(flush, 20000);
+      window.addEventListener('beforeunload', () => {
+        ev('app_close', { inGame: !!(S && !S.over && !S.win && game), snap: S ? snap() : null });
+        try { if (CFG.endpoint && queue.length && navigator.sendBeacon && (!CFG.public || player.consent)) { navigator.sendBeacon(CFG.endpoint, new Blob([JSON.stringify({ token: CFG.token, events: queue.slice(0, 200) })], { type: 'text/plain;charset=utf-8' })); } } catch (x) {}
+      });
+      window.addEventListener('error', (e) => ev('error', { msg: String(e.message || ''), src: String(e.filename || '').slice(-40), line: e.lineno }));
+    }
+    function snap() {
+      return { m: S.month, port: S.port, cash: Math.round(S.cash), bank: Math.round(S.bank), cargo: E.cargoUsed(S), cap: E.capacity(S), guns: S.guns,
+        emps: S.employees.slice(), cons: S.consumables.slice(), paid: S.paid, worth: E.netWorth(S), diff: S.diff, graces: S.graces };
+    }
+    return {
+      get on() { return !!CFG && !player.optout; }, public: !!(CFG && CFG.public), player, ev, flush, snap,
+      newGame() { game = uid(); gameT = Date.now(); turnT = Date.now(); },
+      endGame() { const d = Math.round((Date.now() - gameT) / 1000); return d; },
+      turnSec() { const d = Math.round((Date.now() - turnT) / 1000); turnT = Date.now(); return d; },
+      setNick(n) { player.nick = n; player.consent = true; ls.set('eb.player', player); },
+      optOut() { player.optout = true; player.consent = false; queue.length = 0; ls.set('eb.tq', queue); ls.set('eb.player', player); },
+      get game() { return game; }, set game(g) { game = g; },
+    };
+  })();
+
+  // ── 상점 ──
+  function openShop() {
+    hideTip();
+    const sh = S.shop;
+    const pv = (id) => { const r = E.previewHire(S, id); if (!r) return ''; return '<span class="pv">지난 ' + E.GOODS[r.g].name + ' ' + r.q + E.GOODS[r.g].unit + ' 판매였다면<br><b>' + (r.delta >= 0 ? '+' : '') + fmt(r.delta) + '냥</b>' + (r.expected ? ' (평균)' : '') + '</span>'; };
+    const emps = sh.emps.map((id, i) => '<div class="shopitem">' + empCard(id, i, 'shop') + pv(id) + '<span class="price">' + fmt(E.EMP[id].cost) + '냥, 월급 ' + E.EMP[id].wage + '</span><button class="btn" type="button" data-hire="' + i + '"' + (S.cash >= E.EMP[id].cost && S.employees.length < E.MAX_EMP ? '' : ' disabled') + '>' + (S.employees.length >= E.MAX_EMP ? '자리 꽉 참' : S.cash < E.EMP[id].cost ? '현금 부족' : '고용') + '</button></div>').join('') || '<p>고용할 사람이 없습니다.</p>';
+    const cons = sh.cons.map((id, i) => { const k = E.CONS[id], c = E.consCost(S, id); const maxed = k.good !== undefined && S.ledger[k.good] + S.consumables.filter((x) => x === id).length >= 3; return '<div class="shopitem">' + conCard(id) + '<span class="price">' + fmt(c) + '냥</span><button class="btn ghost" type="button" data-bc="' + i + '"' + (!maxed && S.cash >= c && S.consumables.length < E.MAX_CONS ? '' : ' disabled') + '>' + (maxed ? '최고 단계' : S.consumables.length >= E.MAX_CONS ? '자리 꽉 참' : S.cash < c ? '현금 부족' : '사기') + '</button></div>'; }).join('') || '<p>남은 물건이 없습니다.</p>';
+    const myth = sh.emps.some((id) => E.EMP[id].rarity === 4);
+    if (myth && !sh.mythSeen) { sh.mythSeen = true; setTimeout(() => { chime(); thud(true); }, 80); }
+    openOv('<div class="sheet" style="width:min(720px,100%)"><h2>' + E.PORTS[S.port].name + ' 상점</h2>' + (myth ? '<p class="mythnote">갑급 직원이 나타났다! 이번 입항에만 있다.</p>' : '') +
+      '<p class="age">현금 <b class="num">' + fmt(S.cash) + '</b>냥. 직원 ' + S.employees.length + '/' + E.MAX_EMP + ', 소모품 ' + S.consumables.length + '/' + E.MAX_CONS + '. 카드에 마우스를 올리거나 누르면 설명이 나옵니다. 입항할 때마다 물건이 바뀝니다.' + (S.employees.length >= E.MAX_EMP ? ' 직원 자리가 꽉 찼습니다. 새로 고용하려면 먼저 한 명을 해고하세요.' : '') + '</p>' +
+      '<h3 class="shop-h">직원</h3><div class="shop-row">' + emps + '</div><h3 class="shop-h">소모품</h3><div class="shop-row">' + cons + '</div>' +
+      '<div class="acts2"><button class="btn ghost" type="button" data-reroll' + (S.cash >= E.rerollCost(S) ? '' : ' disabled') + '>새로 고르기 ' + fmt(E.rerollCost(S)) + '냥</button><button class="btn" type="button" data-close data-focus>닫기</button></div></div>');
+  }
+  ov.addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.hire !== undefined) { const hid = S.shop.emps[+b.dataset.hire]; const r = E.hire(S, +b.dataset.hire); if (r.ok) TELE.ev('hire', { id: hid, tier: E.EMP[hid].rarity, cost: E.EMP[hid].cost, m: S.month, port: S.port }); if (!r.ok) toast(r.reason); else { thud(false); coinSound(4); } renderAll(); openShop(); save(); }
+    else if (b.dataset.bc !== undefined) { const bid = S.shop.cons[+b.dataset.bc]; const r = E.buyCons(S, +b.dataset.bc); if (r.ok) TELE.ev('cons_buy', { id: bid, m: S.month }); if (!r.ok) toast(r.reason); else coinSound(3); renderAll(); openShop(); save(); }
+    else if (b.dataset.reroll !== undefined) { const r = E.reroll(S); if (r.ok) TELE.ev('reroll', { m: S.month }); if (!r.ok) toast(r.reason); renderAll(); openShop(); save(); }
+    else if (b.dataset.fuse !== undefined && !busy) doFuse();
+    else if (b.dataset.close !== undefined && !busy) closeOv();
+  });
+  ov.addEventListener('click', (e) => {
+    const pk = e.target.closest('[data-pick]'); if (!pk || busy) return;
+    const i = +pk.dataset.pick, at = fuseSel.indexOf(i);
+    if (at >= 0) fuseSel.splice(at, 1); else if (fuseSel.length < 3) fuseSel.push(i);
+    tone(500 + fuseSel.length * 80, 0.05, 'square', 0.04);
+    openFuse();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (ov.hidden) return;
+    if (e.key === 'Escape' && !busy) closeOv();
+    if (e.key === 'Enter' && !(e.target.closest && e.target.closest('button'))) { const b = ov.querySelector('[data-ok]'); if (b) b.click(); }
+  });
+
+  // ── 전체 ──
+  function renderAll() {
+    renderHeader(); renderBoss(); renderMap(); renderVoyage(); renderTabs(); renderLog(); renderCrew();
+    if (tab === 'market') revealPending = false;
+  }
+
+  function newRun() {
+    S = E.newGame((Date.now() ^ Math.floor(Math.random() * 1e9)) >>> 0);
+    selDest = null; revealPending = false; tab = 'market';
+    renderAll(); save(); intro();
+  }
+  $('#btn-new').addEventListener('click', async () => {
+    if (busy) return;
+    openOv('<div class="sheet"><h2>새 판을 시작할까요?</h2><p>지금 판은 사라집니다.</p><div class="acts2"><button class="btn ghost" type="button" data-close data-focus>그대로 두기</button><button class="btn seal" type="button" data-yes>새 판</button></div></div>');
+    const b = await waitClick('[data-yes],[data-close]');
+    if (b.dataset.yes !== undefined) { if (TELE.game && !S.over && !S.win) TELE.ev('game_abandon', TELE.snap()); TELE.game = null; closeOv(); newRun(); }
+  });
+
+  async function rewardPick() {
+    if (!S.reward) return;
+    const opts = S.reward.options.map((o, i) => '<button type="button" data-rw="' + i + '"' + ((o.type === 'emp' && S.employees.length >= E.MAX_EMP) || (o.price && S.cash < o.price) ? ' disabled' : '') + '><span><b style="font-family:var(--f-ui)">' + o.label + '</b><span class="sub">' + o.desc + (o.type === 'emp' && S.employees.length >= E.MAX_EMP ? ' (직원 자리가 꽉 차서 고를 수 없음)' : '') + (o.price && S.cash < o.price ? ' (현금이 모자라 고를 수 없음)' : '') + '</span></span></button>').join('');
+    const hasMyth = S.reward.options.some((o) => o.myth);
+    openOv('<div class="sheet"><h2>결산 보상</h2><p>상환을 마치자 진 대인이 하나를 골라 가라고 한다.</p>' + (hasMyth ? '<p class="mythnote">연말 결산을 넘긴 상인에게 갑급 직원이 찾아왔다.</p>' : '') + '<div class="odds">' + opts + '</div></div>');
+    if (hasMyth) { chime(); thud(true); }
+    const b = await waitClick('[data-rw]:not([disabled])');
+    const ro = S.reward && S.reward.options[+b.dataset.rw];
+    const r = E.pickReward(S, +b.dataset.rw);
+    if (r.ok) TELE.ev('reward', { kind: ro.type, id: ro.id || null, myth: !!ro.myth, price: ro.price || 0, m: S.month });
+    closeOv();
+    if (!r.ok) toast(r.reason); else { thud(false); chime(); }
+    renderAll(); save();
+  }
+  async function consentThen(next) {
+    const pub = TELE.public;
+    openOv('<div class="sheet"><h2>' + (pub ? '공개 시험판' : '지인 테스트판') + '</h2><p>이 게임은 개발 중인 시험판입니다. 더 재미있게 고치려고 <b>플레이 기록</b>(별명, 매매와 항해 같은 게임 진행, 판이 끝난 뒤 설문)을 개발자에게 보냅니다. 이름, 연락처 같은 개인정보는 모으지 않습니다.' + (pub ? ' 보내고 싶지 않으면 아래 <b>기록 없이 하기</b>를 누르세요. 게임은 똑같이 할 수 있습니다.' : '') + '</p>' +
+      '<p><label for="nick">별명(' + (pub ? '비워 두면 익명' : '개발자가 누구 기록인지 알아볼 정도면 됩니다') + ')</label><br><input id="nick" type="text" maxlength="20" placeholder="예: 바다사나이" style="width:100%;padding:8px;margin-top:6px;font:inherit"></p>' +
+      '<div class="acts2">' + (pub ? '<button class="btn ghost" type="button" data-no>기록 없이 하기</button>' : '') + '<button class="btn seal" type="button" data-ok data-focus>동의하고 시작</button></div></div>');
+    const b = await waitClick('[data-ok], [data-no]');
+    if (b && b.dataset.no !== undefined) { TELE.optOut(); next(); return; }
+    TELE.setNick((($('#nick') && $('#nick').value) || '').trim().slice(0, 20) || '익명');
+    TELE.ev('consent', {});
+    next();
+  }
+  async function intro() {
+    const diffBtns = Object.keys(E.DIFFS).map((k) => { const tmp = E.newGame(1, { diff: k }); return '<button type="button" data-diff="' + k + '"><span><b style="font-family:var(--f-ui)">' + E.DIFFS[k].name + '</b><span class="sub">빚 총 ' + fmt(E.totalDebt(tmp)) + '냥' + (k === 'easy' ? ', 처음 하는 분께 권합니다' : k === 'hard' ? ', 직원 조합을 아는 분께' : '') + '</span></span></button>'; }).join('');
+    openOv('<div class="sheet intro"><h2>은의 바다</h2><p>1580년 류큐 나하. 당신은 진 대인에게 큰 빚을 진 상인입니다. 3년 동안 아홉 번에 걸쳐 빚을 갚아야 합니다.</p>' +
+      '<ol><li>항구마다 시세가 다릅니다. 싸게 사서 비싼 곳에 파세요. 다른 항구 시세는 마지막으로 본 값이라 틀릴 수 있습니다.</li>' +
+      '<li>상점에서 직원을 고용하세요. 팔 때마다 직원이 1번 자리부터 차례로 이익을 불립니다.</li>' +
+      '<li>상환일이 지나가는 순간 현금과 예금에서 돈을 걷어 갑니다. 모자라면 연체 기회를 쓰고(상환을 미루는 대신 다음에 1.2배), 기회가 없으면 화물을 헐값에 급매합니다. 그래도 모자라면 파산입니다. 해마다 9~12월에는 결산 보스가 규칙을 비틉니다.</li></ol>' +
+      '<p style="margin-top:12px"><b>난이도</b></p><div class="odds">' + diffBtns + '</div></div>');
+    const b = await waitClick('[data-diff]');
+    S = E.newGame((Date.now() ^ Math.floor(Math.random() * 1e9)) >>> 0, { diff: b.dataset.diff });
+    TELE.newGame(); S.teleGame = TELE.game;
+    TELE.ev('game_start', { diff: S.diff, seed: S.seed, starterOptions: S.starter ? S.starter.slice() : [] });
+    renderAll(); save();
+    if (S.starter) await starterPick();
+    else closeOv();
+  }
+  async function starterPick() {
+    const cards = S.starter.map((id, i) => '<div class="shopitem">' + empCard(id, i, 'shop') + '<button class="btn seal" type="button" data-starter="' + i + '">데려가기</button></div>').join('');
+    openOv('<div class="sheet" style="width:min(560px,100%)"><h2>첫 직원 고르기</h2><p>나하 부둣가에서 일자리를 찾는 사람이 셋 있다. 한 명을 월급만 주고 데려갈 수 있다(고용비 없음). 카드에 마우스를 올리면 설명이 나옵니다.</p>' +
+      '<div class="shop-row" style="justify-content:center">' + cards + '</div></div>');
+    const b = await waitClick('[data-starter]');
+    E.pickStarter(S, +b.dataset.starter);
+    TELE.ev('starter_pick', { id: S.employees[0] });
+    closeOv(); thud(false); renderAll(); save();
+  }
+
+  function boot(data) {
+    S = (data && data.state) || loadSaved();
+    const fresh = !S;
+    if (S && S.teleGame) TELE.game = S.teleGame;
+    TELE.ev('app_open', { resumed: !fresh, ua: navigator.userAgent.slice(0, 80), vw: innerWidth, vh: innerHeight, sw: screen.width, sh: screen.height, dpr: devicePixelRatio });
+    if (!S) S = E.newGame((Date.now() ^ Math.floor(Math.random() * 1e9)) >>> 0);
+    drawMapStatic();
+    renderAll();
+    if (S.pending && S.pending.type === 'pirate') {
+      busy = true;
+      pirateFlow().then((out) => {
+        if (out.arrival && out.arrival.events.length) return showReport(E.PORTS[S.port].name + ' 입항', out.arrival.events.map((e) => e.text));
+      }).then(() => { revealPending = true; renderAll(); save(); busy = false; });
+    } else if (fresh) { if (TELE.on && !TELE.player.consent && !TELE.player.optout) consentThen(intro); else intro(); }
+    else if (S.starter) starterPick();
+    else if (S.reward) rewardPick();
+  }
+  window.__eunbada = { get state() { return S; }, render: () => renderAll() }; // 디버그용
+  if (window.claude && window.claude.hot && window.claude.hot.snapshot) window.claude.hot.snapshot(() => ({ state: S }));
+  if (window.claude && window.claude.hot && window.claude.hot.ready) window.claude.hot.ready(boot);
+  else boot((window.claude && window.claude.hot && window.claude.hot.data) || {});
+})();
+</script>
+</body>
+</html>
